@@ -5,11 +5,13 @@ import { LibraryService } from '../../services/library.service';
 import { Library } from '../../models/library.model';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { CreateLibraryModalComponent } from './create-library-modal/create-library-modal.component';
+import { EditLibraryModalComponent } from './edit-library-modal/edit-library-modal.component';
+import { DeleteLibraryModalComponent } from './delete-library-modal/delete-library-modal.component';
 import { PaginationComponent } from '../shared/pagination/pagination.component';
 
 @Component({
   selector: 'app-libraries',
-  imports: [NavbarComponent, DatePipe, RouterLink, CreateLibraryModalComponent, PaginationComponent],
+  imports: [NavbarComponent, DatePipe, RouterLink, CreateLibraryModalComponent, EditLibraryModalComponent, DeleteLibraryModalComponent, PaginationComponent],
   templateUrl: './libraries.component.html',
   styleUrl: './libraries.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -21,6 +23,9 @@ export class LibrariesComponent implements OnInit {
   isLoading = signal<boolean>(true);
   errorMessage = signal<string>('');
   showCreateModal = signal<boolean>(false);
+  showEditModal = signal<boolean>(false);
+  showDeleteModal = signal<boolean>(false);
+  selectedLibrary = signal<Library | null>(null);
   
   // Pagination
   currentPage = signal<number>(1);
@@ -68,6 +73,36 @@ export class LibrariesComponent implements OnInit {
 
   onLibraryCreated(): void {
     this.closeCreateModal();
+    this.loadLibraries();
+  }
+
+  openEditModal(library: Library): void {
+    this.selectedLibrary.set(library);
+    this.showEditModal.set(true);
+  }
+
+  closeEditModal(): void {
+    this.showEditModal.set(false);
+    this.selectedLibrary.set(null);
+  }
+
+  onLibraryUpdated(): void {
+    this.closeEditModal();
+    this.loadLibraries();
+  }
+
+  openDeleteModal(library: Library): void {
+    this.selectedLibrary.set(library);
+    this.showDeleteModal.set(true);
+  }
+
+  closeDeleteModal(): void {
+    this.showDeleteModal.set(false);
+    this.selectedLibrary.set(null);
+  }
+
+  onLibraryDeleted(): void {
+    this.closeDeleteModal();
     this.loadLibraries();
   }
 

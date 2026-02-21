@@ -58,6 +58,25 @@ export class LibraryService {
     );
   }
 
+  updateLibrary(libraryId: string, library: CreateLibraryDto): Observable<LibraryResponse> {
+    return this.http.patch<LibraryResponse>(
+      `${environment.apiUrl}/libraries/${libraryId}`,
+      library,
+      { withCredentials: true }
+    ).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  deleteLibrary(libraryId: string): Observable<void> {
+    return this.http.delete<void>(
+      `${environment.apiUrl}/libraries/${libraryId}`,
+      { withCredentials: true }
+    ).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'Ha ocurrido un error inesperado';
     

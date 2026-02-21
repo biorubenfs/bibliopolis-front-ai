@@ -114,12 +114,20 @@
     color: var(--color-white);
 
     th {
-      padding: 1rem;
+      padding: 0.5rem 0.75rem;
       text-align: left;
       font-weight: 600;
       font-size: 0.875rem;
-      text-transform: uppercase;
+      text-transform: capitalize;
       letter-spacing: 0.5px;
+
+      &.books-header {
+        text-align: center;
+      }
+
+      &.actions-header {
+        text-align: center;
+      }
     }
   }
 
@@ -138,7 +146,7 @@
     }
 
     td {
-      padding: 1rem;
+      padding: 0.5rem 0.75rem;
       vertical-align: middle;
     }
   }
@@ -182,7 +190,8 @@
 }
 
 .library-actions {
-  text-align: right;
+  text-align: center;
+  vertical-align: middle;
 
   .btn-icon {
     display: inline-flex;
@@ -196,10 +205,20 @@
     border-radius: 6px;
     transition: all 0.2s;
     text-decoration: none;
+    margin-left: 0.25rem;
 
     &:hover {
       background-color: var(--color-light);
       color: var(--color-primary);
+    }
+
+    &.btn-icon-danger {
+      color: var(--color-error);
+
+      &:hover {
+        background-color: #ffebee;
+        color: #c62828;
+      }
     }
   }
 }
