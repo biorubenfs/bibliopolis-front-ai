@@ -26,3 +26,8 @@ export interface LibrariesResponse {
 export interface LibraryResponse {
   results: LibraryItem;
 }
+
+export interface CreateLibraryDto {
+  name: string;
+  description: string;
+}

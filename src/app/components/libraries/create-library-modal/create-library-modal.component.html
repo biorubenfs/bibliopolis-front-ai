@@ -1,0 +1,85 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Nueva biblioteca</h3>
+      <button class="close-button" (click)="onClose()" type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    @if (errorMessage()) {
+      <div class="alert alert-error">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <form [formGroup]="libraryForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="name">Nombre de la biblioteca *</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Ej: Mi biblioteca personal"
+          [class.error]="name?.invalid && name?.touched"
+        />
+        @if (name?.invalid && name?.touched) {
+          <span class="error-message">
+            @if (name?.errors?.['required']) {
+              El nombre es obligatorio
+            }
+            @if (name?.errors?.['minlength']) {
+              El nombre debe tener al menos 3 caracteres
+            }
+          </span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="description">Descripción *</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          rows="4"
+          placeholder="Describe tu biblioteca..."
+          [class.error]="description?.invalid && description?.touched"
+        ></textarea>
+        @if (description?.invalid && description?.touched) {
+          <span class="error-message">
+            @if (description?.errors?.['required']) {
+              La descripción es obligatoria
+            }
+            @if (description?.errors?.['minlength']) {
+              La descripción debe tener al menos 10 caracteres
+            }
+          </span>
+        }
+      </div>
+
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onClose()"
+          [disabled]="isSubmitting()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="isSubmitting()"
+        >
+          @if (isSubmitting()) {
+            Agregando...
+          } @else {
+            Agregar
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

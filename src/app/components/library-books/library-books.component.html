@@ -75,6 +75,15 @@
             </div>
           }
         </div>
+        
+        <app-pagination
+          [currentPage]="currentPage()"
+          [totalPages]="totalPages()"
+          [totalItems]="totalItems()"
+          [itemsPerPage]="itemsPerPage()"
+          (pageChange)="onPageChange($event)"
+          (itemsPerPageChange)="onItemsPerPageChange($event)"
+        />
       }
     }
   </div>

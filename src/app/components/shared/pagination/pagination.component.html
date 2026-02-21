@@ -1,0 +1,47 @@
+<div class="pagination">
+  <div class="pagination-controls">
+    <div class="items-per-page">
+      <label for="pageSize">Mostrar:</label>
+      <select 
+        id="pageSize"
+        (change)="onItemsPerPageChange($event)"
+      >
+        @for (size of pageSizeOptions; track size) {
+          <option [value]="size" [selected]="size === itemsPerPage()">{{ size }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="pagination-info">
+      <span>
+        {{ (currentPage() - 1) * itemsPerPage() + 1 }}-{{ Math.min(currentPage() * itemsPerPage(), totalItems()) }} de {{ totalItems() }}
+      </span>
+    </div>
+
+    <div class="pagination-buttons">
+      <button 
+        class="btn-pagination"
+        [disabled]="currentPage() === 1"
+        (click)="onPreviousPage()"
+        type="button"
+        title="Página anterior"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </button>
+
+      <button 
+        class="btn-pagination"
+        [disabled]="currentPage() === totalPages()"
+        (click)="onNextPage()"
+        type="button"
+        title="Página siguiente"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>

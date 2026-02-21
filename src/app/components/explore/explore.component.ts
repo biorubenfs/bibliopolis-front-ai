@@ -1,26 +1,22 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { LibraryService } from '../../services/library.service';
-import { Library } from '../../models/library.model';
+import { BookService } from '../../services/book.service';
+import { Book } from '../../models/book.model';
 import { NavbarComponent } from '../navbar/navbar.component';
-import { CreateLibraryModalComponent } from './create-library-modal/create-library-modal.component';
 import { PaginationComponent } from '../shared/pagination/pagination.component';
 
 @Component({
-  selector: 'app-libraries',
-  imports: [NavbarComponent, DatePipe, RouterLink, CreateLibraryModalComponent, PaginationComponent],
-  templateUrl: './libraries.component.html',
-  styleUrl: './libraries.component.scss',
+  selector: 'app-explore',
+  imports: [NavbarComponent, PaginationComponent],
+  templateUrl: './explore.component.html',
+  styleUrl: './explore.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LibrariesComponent implements OnInit {
-  private libraryService = inject(LibraryService);
+export class ExploreComponent implements OnInit {
+  private bookService = inject(BookService);
 
-  libraries = signal<Library[]>([]);
+  books = signal<Book[]>([]);
   isLoading = signal<boolean>(true);
   errorMessage = signal<string>('');
-  showCreateModal = signal<boolean>(false);
   
   // Pagination
   currentPage = signal<number>(1);
@@ -29,19 +25,19 @@ export class LibrariesComponent implements OnInit {
   totalPages = signal<number>(0);
 
   ngOnInit(): void {
-    this.loadLibraries();
+    this.loadBooks();
   }
 
-  loadLibraries(): void {
+  loadBooks(): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
 
     const skip = (this.currentPage() - 1) * this.itemsPerPage();
     const limit = this.itemsPerPage();
 
-    this.libraryService.getLibraries(undefined, skip, limit).subscribe({
+    this.bookService.getBooks(skip, limit).subscribe({
       next: (response) => {
-        this.libraries.set(
+        this.books.set(
           response.results.map(item => ({
             ...item.attributes,
             id: item.id
@@ -58,29 +54,21 @@ export class LibrariesComponent implements OnInit {
     });
   }
 
-  openCreateModal(): void {
-    this.showCreateModal.set(true);
-  }
-
-  closeCreateModal(): void {
-    this.showCreateModal.set(false);
-  }
-
-  onLibraryCreated(): void {
-    this.closeCreateModal();
-    this.loadLibraries();
-  }
-
   onPageChange(page: number): void {
     this.currentPage.set(page);
-    this.loadLibraries();
+    this.loadBooks();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   onItemsPerPageChange(newSize: number): void {
     this.itemsPerPage.set(newSize);
-    this.currentPage.set(1);
-    this.loadLibraries();
+    this.currentPage.set(1); // Reset to first page
+    this.loadBooks();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  getAuthorsText(authors: string[]): string {
+    if (!authors || authors.length === 0) return 'Autor desconocido';
+    return authors.join(', ');
   }
 }

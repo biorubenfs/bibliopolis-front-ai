@@ -1,0 +1,124 @@
+.pagination {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-light);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.items-per-page {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+
+  label {
+    color: var(--color-secondary);
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  select {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--color-light);
+    border-radius: 4px;
+    background-color: var(--color-white);
+    color: var(--color-primary);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: border-color 0.2s;
+
+    &:hover {
+      border-color: var(--color-secondary);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--color-secondary);
+    }
+  }
+}
+
+.pagination-info {
+  color: var(--color-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.pagination-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.btn-pagination {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-light);
+  border-radius: 4px;
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-secondary);
+    border-color: var(--color-secondary);
+    color: var(--color-white);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .pagination {
+    justify-content: center;
+  }
+
+  .pagination-controls {
+    gap: 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .items-per-page {
+    label {
+      font-size: 0.75rem;
+    }
+
+    select {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.375rem;
+    }
+  }
+
+  .pagination-info {
+    font-size: 0.75rem;
+  }
+
+  .btn-pagination {
+    width: 26px;
+    height: 26px;
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+  }
+}

@@ -1,0 +1,43 @@
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { catchError, throwError, Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { BooksResponse } from '../models/book.model';
+import { ApiError } from '../models/error.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class BookService {
+  private http = inject(HttpClient);
+
+  getBooks(skip: number = 0, limit: number = 25): Observable<BooksResponse> {
+    const params = new HttpParams()
+      .set('skip', skip.toString())
+      .set('limit', limit.toString());
+
+    return this.http.get<BooksResponse>(
+      `${environment.apiUrl}/books`,
+      { 
+        params,
+        withCredentials: true 
+      }
+    ).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    let errorMessage = 'Ha ocurrido un error inesperado';
+    
+    if (error.error instanceof ErrorEvent) {
+      // Client-side error
+      errorMessage = error.error.message;
+    } else if (error.error && (error.error as ApiError).message) {
+      // API error
+      errorMessage = (error.error as ApiError).message;
+    }
+    
+    return throwError(() => new Error(errorMessage));
+  }
+}

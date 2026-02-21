@@ -1,0 +1,73 @@
+<app-navbar></app-navbar>
+
+<div class="explore-container">
+  <div class="container">
+    <div class="header">
+      <h2>Últimos títulos añadidos</h2>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Cargando libros...</p>
+      </div>
+    }
+
+    @if (errorMessage()) {
+      <div class="alert alert-error">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    @if (!isLoading() && !errorMessage()) {
+      @if (books().length === 0) {
+        <div class="empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+          <h3>No hay libros disponibles</h3>
+          <p>Vuelve más tarde para ver nuevos títulos</p>
+        </div>
+      } @else {
+        <div class="books-grid">
+          @for (book of books(); track book.id) {
+            <div class="book-card">
+              <div class="book-cover">
+                @if (book.coverUrl) {
+                  <img [src]="book.coverUrl" [alt]="book.title" loading="lazy" />
+                } @else {
+                  <div class="no-cover">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                  </div>
+                }
+              </div>
+              <div class="book-info">
+                <h3 class="book-title">{{ book.title }}</h3>
+                <p class="book-authors">{{ getAuthorsText(book.authors) }}</p>
+
+                <div class="book-isbn">
+                  <small>ISBN-13: {{ book.isbn13 }}</small>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        @if (totalItems() > 0) {
+          <app-pagination
+            [currentPage]="currentPage()"
+            [totalPages]="totalPages()"
+            [totalItems]="totalItems()"
+            [itemsPerPage]="itemsPerPage()"
+            (pageChange)="onPageChange($event)"
+            (itemsPerPageChange)="onItemsPerPageChange($event)"
+          />
+        }
+      }
+    }
+  </div>
+</div>

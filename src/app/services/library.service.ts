@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { catchError, throwError, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { LibrariesResponse } from '../models/library.model';
+import { LibrariesResponse, LibraryResponse, CreateLibraryDto } from '../models/library.model';
 import { UserBooksResponse } from '../models/user-book.model';
 import { ApiError } from '../models/error.model';
 
@@ -43,6 +43,16 @@ export class LibraryService {
         params,
         withCredentials: true 
       }
+    ).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  createLibrary(library: CreateLibraryDto): Observable<LibraryResponse> {
+    return this.http.post<LibraryResponse>(
+      `${environment.apiUrl}/libraries`,
+      library,
+      { withCredentials: true }
     ).pipe(
       catchError(this.handleError)
     );
