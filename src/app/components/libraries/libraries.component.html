@@ -1,0 +1,80 @@
+<app-navbar></app-navbar>
+
+<div class="libraries-container">
+  <div class="container">
+    <div class="header">
+      <h2>Mis Bibliotecas</h2>
+      <p class="subtitle">Gestiona tu colección de libros</p>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Cargando bibliotecas...</p>
+      </div>
+    }
+
+    @if (errorMessage()) {
+      <div class="alert alert-error">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    @if (!isLoading() && !errorMessage()) {
+      @if (libraries().length === 0) {
+        <div class="empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+          <h3>No tienes bibliotecas aún</h3>
+          <p>Crea tu primera biblioteca para comenzar a organizar tu colección</p>
+        </div>
+      } @else {
+        <div class="table-wrapper">
+          <table class="libraries-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Libros</th>
+                <th>Fecha de creación</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (library of libraries(); track library.id) {
+                <tr>
+                  <td class="library-name">
+                    <div class="name-cell">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                      </svg>
+                      <span>{{ library.name }}</span>
+                    </div>
+                  </td>
+                  <td class="library-description">{{ library.description }}</td>
+                  <td class="library-books">
+                    <span class="badge">
+                      {{ library.books.length }}
+                    </span>
+                  </td>
+                  <td class="library-date">{{ library.createdAt | date: 'dd/MM/yyyy' }}</td>
+                  <td class="library-actions">
+                    <a [routerLink]="['/libraries', library.id, 'books']" class="btn-icon" title="Ver libros">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                    </a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  </div>
+</div>

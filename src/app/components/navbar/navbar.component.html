@@ -1,0 +1,53 @@
+<nav class="navbar">
+  <div class="container">
+    <div class="navbar-content">
+      <div class="navbar-menu">
+        <a 
+          routerLink="/libraries" 
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact: false}"
+          class="nav-link"
+        >
+          Mis bibliotecas
+        </a>
+        <a 
+          class="nav-link"
+        >
+          Explorar
+        </a>
+      </div>
+
+      <div class="navbar-actions">
+        <div class="profile-menu">
+          <button 
+            class="profile-button"
+            (click)="toggleDropdown()"
+            type="button"
+          >
+            @if (authService.currentUser()) {
+              <img 
+                [src]="'data:image/jpeg;base64,' + authService.currentUser()!.avatar" 
+                alt="Avatar"
+                class="profile-avatar"
+              />
+            }
+          </button>
+
+          @if (isDropdownOpen()) {
+            <div class="dropdown-menu">
+              <a class="dropdown-item">
+                Perfil
+              </a>
+              <a 
+                class="dropdown-item"
+                (click)="onLogout()"
+              >
+                Cerrar sesión
+              </a>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
