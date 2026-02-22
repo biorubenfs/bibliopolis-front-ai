@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, OnInit, computed } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService, UpdateProfileDto, UpdatePasswordDto } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
@@ -14,7 +14,7 @@ import { NavbarComponent } from '../navbar/navbar.component';
 export class ProfileComponent implements OnInit {
   private fb = inject(FormBuilder);
   private userService = inject(UserService);
-  private authService = inject(AuthService);
+  authService = inject(AuthService);
 
   isSubmittingProfile = signal<boolean>(false);
   isSubmittingPassword = signal<boolean>(false);
@@ -22,6 +22,12 @@ export class ProfileComponent implements OnInit {
   profileSuccessMessage = signal<string>('');
   passwordErrorMessage = signal<string>('');
   passwordSuccessMessage = signal<string>('');
+
+  // Computed signal that automatically updates when currentUser changes
+  avatarUrl = computed(() => {
+    const user = this.authService.currentUser();
+    return user ? `data:image/jpeg;base64,${user.avatar}` : '';
+  });
 
   profileForm = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(2)]]
@@ -57,17 +63,17 @@ export class ProfileComponent implements OnInit {
 
     this.userService.updateProfile(data).subscribe({
       next: () => {
-        this.isSubmittingProfile.set(false);
-        this.profileSuccessMessage.set('Perfil actualizado correctamente');
-        
-        // Update current user in auth service
-        const currentUser = this.authService.currentUser();
-        if (currentUser) {
-          this.authService.currentUser.set({
-            ...currentUser,
-            name: data.name
-          });
-        }
+        // Refresh user data to get updated avatar from backend
+        this.authService.refreshUser().subscribe({
+          next: () => {
+            this.isSubmittingProfile.set(false);
+            this.profileSuccessMessage.set('Perfil actualizado correctamente');
+          },
+          error: () => {
+            this.isSubmittingProfile.set(false);
+            this.profileSuccessMessage.set('Perfil actualizado correctamente');
+          }
+        });
       },
       error: (error: Error) => {
         this.profileErrorMessage.set(error.message);

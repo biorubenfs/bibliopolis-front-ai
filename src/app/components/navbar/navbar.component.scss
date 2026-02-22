@@ -81,6 +81,7 @@
   object-fit: cover;
   border: 2px solid rgba(255, 255, 255, 0.3);
   transition: border-color 0.2s;
+  background-color: var(--color-white);
 
   &:hover {
     border-color: rgba(255, 255, 255, 0.6);

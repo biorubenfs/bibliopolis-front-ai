@@ -85,6 +85,20 @@ export class AuthService {
     );
   }
 
+  // Method to force refresh user data (e.g., after profile update)
+  refreshUser(): Observable<User> {
+    return this.http.get<UserResponse>(
+      `${environment.apiUrl}/auth/me`,
+      { withCredentials: true }
+    ).pipe(
+      map((response) => {
+        this.currentUser.set(response.results.attributes);
+        return response.results.attributes;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
   private checkAuthStatus(): void {
     // Call /auth/me to verify if user is authenticated
     this.http.get<UserResponse>(
