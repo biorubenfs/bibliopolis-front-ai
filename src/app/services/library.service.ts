@@ -34,11 +34,12 @@ export class LibraryService {
 
   getLibraryBooks(libraryId: string, skip: number = 0, limit: number = 10): Observable<UserBooksResponse> {
     let params = new HttpParams()
+      .set('libraryId', libraryId)
       .set('skip', skip.toString())
       .set('limit', limit.toString());
 
     return this.http.get<UserBooksResponse>(
-      `${environment.apiUrl}/libraries/${libraryId}/books`,
+      `${environment.apiUrl}/user-books`,
       { 
         params,
         withCredentials: true 
