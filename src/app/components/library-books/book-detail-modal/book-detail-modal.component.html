@@ -1,0 +1,134 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Detalle del libro</h3>
+      <button class="close-button" (click)="onClose()" type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      @if (errorMessage()) {
+        <div class="alert alert-error">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      @if (successMessage()) {
+        <div class="alert alert-success">
+          {{ successMessage() }}
+        </div>
+      }
+
+      <div class="book-detail">
+        <div class="book-cover-section">
+          @if (book().bookCoverUrl) {
+            <img [src]="book().bookCoverUrl" [alt]="book().bookTitle" class="book-cover" />
+          } @else {
+            <div class="no-cover">
+              <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+              </svg>
+            </div>
+          }
+        </div>
+
+        <div class="book-info-section">
+          <h4 class="book-title">{{ book().bookTitle }}</h4>
+          <p class="book-authors">{{ getAuthorsText(book().bookAuthors) }}</p>
+
+          <div class="book-meta">
+            <div class="book-field">
+              <span class="field-label">Valoración:</span>
+              <div class="rating-edit-container">
+                <div class="rating-stars-interactive" (mouseleave)="onStarHover(null)">
+                  @for (star of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track star) {
+                    <button
+                      type="button"
+                      class="star-button"
+                      [class.active]="isStarActive(star - 1)"
+                      (click)="setRating(star)"
+                      (mouseenter)="onStarHover(star)"
+                    >
+                      ★
+                    </button>
+                  }
+                </div>
+                <span class="rating-value">
+                  {{ editableRating() !== null ? editableRating() + '/10' : 'Sin valorar' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="book-field">
+              <span class="field-label">ISBN-13:</span>
+              <span class="field-value">{{ book().bookIsbn13 }}</span>
+            </div>
+
+            @if (book().bookIsbn10) {
+              <div class="book-field">
+                <span class="field-label">ISBN-10:</span>
+                <span class="field-value">{{ book().bookIsbn10 }}</span>
+              </div>
+            }
+
+            <div class="book-field notes-field">
+              <div class="notes-header">
+                <span class="field-label">Notas:</span>
+                <span class="notes-counter" [class.warning]="notesRemaining() < 20">
+                  {{ notesRemaining() }} caracteres restantes
+                </span>
+              </div>
+              <textarea
+                class="notes-textarea"
+                [(ngModel)]="editableNotes"
+                [maxlength]="maxNotesLength"
+                placeholder="Añade tus notas personales sobre este libro..."
+                rows="6"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="onClose()"
+        [disabled]="isDeleting() || isSaving()"
+      >
+        Cerrar
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onSaveChanges()"
+        [disabled]="isDeleting() || isSaving() || !hasChanges()"
+      >
+        @if (isSaving()) {
+          Guardando...
+        } @else {
+          Guardar cambios
+        }
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="onRemoveFromLibrary()"
+        [disabled]="isDeleting() || isSaving()"
+      >
+        @if (isDeleting()) {
+          Eliminando...
+        } @else {
+          Eliminar de la biblioteca
+        }
+      </button>
+    </div>
+  </div>
+</div>

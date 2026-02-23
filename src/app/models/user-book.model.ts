@@ -28,3 +28,12 @@ export interface UserBooksResponse {
     total: number;
   };
 }
+
+export interface UpdateUserBookDto {
+  rating?: number | null;
+  notes?: string | null;
+}
+
+export interface UserBookResponse {
+  data: UserBookItem;
+}

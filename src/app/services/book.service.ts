@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { catchError, throwError, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { BooksResponse } from '../models/book.model';
+import { UpdateUserBookDto, UserBookResponse } from '../models/user-book.model';
 import { ApiError } from '../models/error.model';
 
 @Injectable({
@@ -22,6 +23,16 @@ export class BookService {
         params,
         withCredentials: true 
       }
+    ).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  updateUserBook(userBookId: string, data: UpdateUserBookDto): Observable<UserBookResponse> {
+    return this.http.patch<UserBookResponse>(
+      `${environment.apiUrl}/user-books/${userBookId}`,
+      data,
+      { withCredentials: true }
     ).pipe(
       catchError(this.handleError)
     );

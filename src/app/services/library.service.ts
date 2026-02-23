@@ -78,6 +78,15 @@ export class LibraryService {
     );
   }
 
+  removeBookFromLibrary(libraryId: string, bookId: string): Observable<void> {
+    return this.http.delete<void>(
+      `${environment.apiUrl}/libraries/${libraryId}/books/${bookId}`,
+      { withCredentials: true }
+    ).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'Ha ocurrido un error inesperado';
     
