@@ -1,0 +1,80 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches:
+      - main        # Despliega a DEV
+      - production  # Despliega a PRODUCTION
+  workflow_dispatch: # Permite ejecutarlo manualmente desde GitHub
+    inputs:
+      environment:
+        description: 'Entorno a desplegar'
+        required: true
+        type: choice
+        options:
+          - dev
+          - production
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Determinar el entorno según la rama o input manual
+    environment: 
+      name: ${{ github.event.inputs.environment || (github.ref == 'refs/heads/production' && 'production' || 'dev') }}
+      url: ${{ github.ref == 'refs/heads/production' && 'https://bibliopolis.es' || 'http://dev.bibliopolis.es' }}
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+    
+    - name: Determinar configuración de build
+      id: build-config
+      run: |
+        if [ "${{ github.event.inputs.environment }}" == "production" ] || [ "${{ github.ref }}" == "refs/heads/production" ]; then
+          echo "config=production" >> $GITHUB_OUTPUT
+          echo "environment=production" >> $GITHUB_OUTPUT
+        else
+          echo "config=dev" >> $GITHUB_OUTPUT
+          echo "environment=dev" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Configurar pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: latest
+    
+    - name: Configurar Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'pnpm'
+    
+    - name: Instalar dependencias
+      run: pnpm install --frozen-lockfile
+    
+    - name: Compilar proyecto para ${{ steps.build-config.outputs.environment }}
+      run: pnpm run build -- --configuration ${{ steps.build-config.outputs.config }}
+    
+    - name: Configurar clave SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+    
+    - name: Desplegar al VPS (${{ steps.build-config.outputs.environment }})
+      run: |
+        rsync -avz --delete \
+          -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" \
+          dist/bibliopolis-front/browser/ \
+          ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:${{ secrets.VPS_PATH }}
+    
+    - name: Ajustar permisos en el VPS
+      run: |
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no \
+          ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+          "sudo chown -R www-data:www-data ${{ secrets.VPS_PATH }} && sudo chmod -R 755 ${{ secrets.VPS_PATH }}"
+    
+    - name: Limpiar clave SSH
+      if: always()
+      run: rm -f ~/.ssh/id_rsa
