@@ -62,24 +62,12 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
     
-    - name: Preparar permisos para despliegue
-      run: |
-        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no \
-          ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
-          "sudo chown -R ${{ secrets.VPS_USER }}:www-data ${{ secrets.VPS_PATH }} && sudo chmod -R 775 ${{ secrets.VPS_PATH }}"
-    
     - name: Desplegar al VPS (${{ steps.build-config.outputs.environment }})
       run: |
         rsync -avz --delete \
           -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" \
           dist/bibliopolis-front/browser/ \
           ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:${{ secrets.VPS_PATH }}
-    
-    - name: Ajustar permisos finales en el VPS
-      run: |
-        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no \
-          ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
-          "sudo chown -R www-data:www-data ${{ secrets.VPS_PATH }} && sudo chmod -R 755 ${{ secrets.VPS_PATH }}"
     
     - name: Limpiar clave SSH
       if: always()
