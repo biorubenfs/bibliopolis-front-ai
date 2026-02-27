@@ -53,7 +53,7 @@ jobs:
       run: pnpm install --frozen-lockfile
     
     - name: Compilar proyecto para ${{ steps.build-config.outputs.environment }}
-      run: pnpm run build -- --configuration ${{ steps.build-config.outputs.config }}
+      run: pnpm run build --configuration ${{ steps.build-config.outputs.config }}
     
     - name: Configurar clave SSH
       run: |
