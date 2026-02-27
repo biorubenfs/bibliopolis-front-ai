@@ -1,0 +1,134 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Añadir libro a la biblioteca</h3>
+      <button class="close-button" (click)="onClose()" type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      @if (errorMessage()) {
+        <div class="alert alert-error">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <div class="search-section">
+        <label for="isbn-input" class="search-label">
+          Introduce el ISBN del libro
+        </label>
+        <div class="search-input-group">
+          <input
+            id="isbn-input"
+            type="text"
+            class="search-input"
+            [(ngModel)]="isbn"
+            placeholder="Ejemplo: 9780545010221"
+            [disabled]="isSearching() || isAdding()"
+            (keyup.enter)="onSearch()"
+          />
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="onSearch()"
+            [disabled]="isSearching() || isAdding() || !isbn().trim()"
+          >
+            @if (isSearching()) {
+              Buscando...
+            } @else {
+              Buscar
+            }
+          </button>
+        </div>
+        <p class="search-hint">
+          Puedes introducir un ISBN-10 o ISBN-13
+        </p>
+      </div>
+
+      @if (isSearching()) {
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Buscando libro...</p>
+        </div>
+      }
+
+      @if (searchPerformed() && !isSearching() && !foundBook() && !errorMessage()) {
+        <div class="empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          <h4>No se encontró el libro</h4>
+          <p>No pudimos encontrar un libro con ese ISBN. Verifica que sea correcto.</p>
+        </div>
+      }
+
+      @if (foundBook()) {
+        <div class="book-result">
+          <h4 class="result-title">Libro encontrado</h4>
+          <div class="book-card">
+            <div class="book-cover">
+              @if (foundBook()!.coverUrl) {
+                <img [src]="foundBook()!.coverUrl" [alt]="foundBook()!.title" />
+              } @else {
+                <div class="no-cover">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                  </svg>
+                </div>
+              }
+            </div>
+            <div class="book-info">
+              <h5 class="book-title">{{ foundBook()!.title }}</h5>
+              <p class="book-authors">{{ getAuthorsText(foundBook()!.authors) }}</p>
+              <div class="book-isbn-info">
+                @if (foundBook()!.isbn13) {
+                  <div class="isbn-item">
+                    <span class="isbn-label">ISBN-13:</span>
+                    <span class="isbn-value">{{ foundBook()!.isbn13 }}</span>
+                  </div>
+                }
+                @if (foundBook()!.isbn10) {
+                  <div class="isbn-item">
+                    <span class="isbn-label">ISBN-10:</span>
+                    <span class="isbn-value">{{ foundBook()!.isbn10 }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="modal-actions">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="onClose()"
+        [disabled]="isSearching() || isAdding()"
+      >
+        Cancelar
+      </button>
+      @if (foundBook()) {
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="onAddBook()"
+          [disabled]="isSearching() || isAdding()"
+        >
+          @if (isAdding()) {
+            Añadiendo...
+          } @else {
+            Añadir a la biblioteca
+          }
+        </button>
+      }
+    </div>
+  </div>
+</div>

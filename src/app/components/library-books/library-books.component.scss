@@ -12,6 +12,19 @@
     gap: 1rem;
   }
 
+  .header-top {
+    display: flex;
+    align-items: center;
+  }
+
+  .header-title-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
   .back-link {
     display: inline-flex;
     align-items: center;
@@ -37,6 +50,39 @@
     font-size: 2rem;
     margin: 0;
     font-weight: 600;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+
+    &.btn-primary {
+      background-color: var(--color-accent);
+      color: var(--color-white);
+
+      &:hover {
+        background-color: #5568d3;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    svg {
+      flex-shrink: 0;
+    }
   }
 }
 

@@ -23,3 +23,24 @@ export interface BooksResponse {
     total: number;
   };
 }
+
+export interface ExternalBook {
+  title: string;
+  authors: string[];
+  isbn13: string;
+  isbn10: string;
+  coverUrl: string;
+}
+
+export interface ExternalBookResponse {
+  results: {
+    type: 'book-result';
+    attributes: ExternalBook;
+  };
+}
+
+export interface AddBookToLibraryDto {
+  isbn: string;
+  rating?: number | null;
+  notes?: string | null;
+}

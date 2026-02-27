@@ -5,10 +5,12 @@ import { UserBook } from '../../models/user-book.model';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { PaginationComponent } from '../shared/pagination/pagination.component';
 import { BookDetailModalComponent } from './book-detail-modal/book-detail-modal.component';
+import { AddBookModalComponent } from './add-book-modal/add-book-modal.component';
+import { RemoveBookModalComponent } from './remove-book-modal/remove-book-modal.component';
 
 @Component({
   selector: 'app-library-books',
-  imports: [NavbarComponent, RouterLink, PaginationComponent, BookDetailModalComponent],
+  imports: [NavbarComponent, RouterLink, PaginationComponent, BookDetailModalComponent, AddBookModalComponent, RemoveBookModalComponent],
   templateUrl: './library-books.component.html',
   styleUrl: './library-books.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -29,9 +31,12 @@ export class LibraryBooksComponent implements OnInit {
   totalItems = signal<number>(0);
   totalPages = signal<number>(0);
 
-  // Modal
+  // Modals
   showDetailModal = signal<boolean>(false);
   selectedBook = signal<UserBook | null>(null);
+  showAddBookModal = signal<boolean>(false);
+  showRemoveBookModal = signal<boolean>(false);
+  bookToRemove = signal<UserBook | null>(null);
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -115,18 +120,36 @@ export class LibraryBooksComponent implements OnInit {
     this.loadBooks();
   }
 
-  onRemoveBook(event: Event, book: UserBook): void {
+  openAddBookModal(): void {
+    this.showAddBookModal.set(true);
+  }
+
+  closeAddBookModal(): void {
+    this.showAddBookModal.set(false);
+  }
+
+  onBookAdded(): void {
+    this.closeAddBookModal();
+    this.loadBooks();
+  }
+
+  openRemoveBookModal(event: Event, book: UserBook): void {
     event.stopPropagation();
-    
-    if (confirm(`¿Estás seguro de que deseas eliminar "${book.bookTitle}" de esta biblioteca?`)) {
-      this.libraryService.removeBookFromLibrary(this.libraryId(), book.id).subscribe({
-        next: () => {
-          this.loadBooks();
-        },
-        error: (error: Error) => {
-          this.errorMessage.set(error.message);
-        }
-      });
-    }
+    this.bookToRemove.set(book);
+    this.showRemoveBookModal.set(true);
+  }
+
+  closeRemoveBookModal(): void {
+    this.showRemoveBookModal.set(false);
+    this.bookToRemove.set(null);
+  }
+
+  onBookRemovedFromList(): void {
+    this.closeRemoveBookModal();
+    this.loadBooks();
+  }
+
+  onRemoveBook(event: Event, book: UserBook): void {
+    this.openRemoveBookModal(event, book);
   }
 }

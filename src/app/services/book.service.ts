@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { catchError, throwError, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { BooksResponse } from '../models/book.model';
+import { BooksResponse, ExternalBookResponse } from '../models/book.model';
 import { UpdateUserBookDto, UserBookResponse } from '../models/user-book.model';
 import { ApiError } from '../models/error.model';
 
@@ -33,6 +33,20 @@ export class BookService {
       `${environment.apiUrl}/user-books/${userBookId}`,
       data,
       { withCredentials: true }
+    ).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  searchExternalBook(isbn: string): Observable<ExternalBookResponse> {
+    const params = new HttpParams().set('isbn', isbn);
+
+    return this.http.get<ExternalBookResponse>(
+      `${environment.apiUrl}/external`,
+      {
+        params,
+        withCredentials: true
+      }
     ).pipe(
       catchError(this.handleError)
     );

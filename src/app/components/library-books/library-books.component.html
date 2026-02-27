@@ -4,13 +4,24 @@
   <div class="container">
     <div class="header">
       <div class="header-content">
-        <a routerLink="/libraries" class="back-link">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
-          </svg>
-          Volver a bibliotecas
-        </a>
-        <h2>Libros de la biblioteca</h2>
+        <div class="header-top">
+          <a routerLink="/libraries" class="back-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Volver a bibliotecas
+          </a>
+        </div>
+        <div class="header-title-section">
+          <h2>Libros de la biblioteca</h2>
+          <button class="btn btn-primary" (click)="openAddBookModal()" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Añadir libro
+          </button>
+        </div>
       </div>
     </div>
 
@@ -109,5 +120,22 @@
     (closeModal)="closeDetailModal()"
     (bookRemoved)="onBookRemoved()"
     (bookUpdated)="onBookUpdated()"
+  />
+}
+
+@if (showAddBookModal()) {
+  <app-add-book-modal
+    [libraryId]="libraryId()"
+    (closeModal)="closeAddBookModal()"
+    (bookAdded)="onBookAdded()"
+  />
+}
+
+@if (showRemoveBookModal() && bookToRemove()) {
+  <app-remove-book-modal
+    [book]="bookToRemove()!"
+    [libraryId]="libraryId()"
+    (closeModal)="closeRemoveBookModal()"
+    (bookRemoved)="onBookRemovedFromList()"
   />
 }

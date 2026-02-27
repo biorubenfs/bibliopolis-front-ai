@@ -4,6 +4,7 @@ import { catchError, throwError, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { LibrariesResponse, LibraryResponse, CreateLibraryDto } from '../models/library.model';
 import { UserBooksResponse } from '../models/user-book.model';
+import { AddBookToLibraryDto } from '../models/book.model';
 import { ApiError } from '../models/error.model';
 
 @Injectable({
@@ -81,6 +82,16 @@ export class LibraryService {
   removeBookFromLibrary(libraryId: string, bookId: string): Observable<void> {
     return this.http.delete<void>(
       `${environment.apiUrl}/libraries/${libraryId}/books/${bookId}`,
+      { withCredentials: true }
+    ).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  addBookToLibrary(libraryId: string, data: AddBookToLibraryDto): Observable<void> {
+    return this.http.post<void>(
+      `${environment.apiUrl}/libraries/${libraryId}/books`,
+      data,
       { withCredentials: true }
     ).pipe(
       catchError(this.handleError)
