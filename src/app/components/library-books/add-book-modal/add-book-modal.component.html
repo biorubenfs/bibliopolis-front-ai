@@ -17,6 +17,12 @@
         </div>
       }
 
+      @if (scannerError()) {
+        <div class="alert alert-error">
+          {{ scannerError() }}
+        </div>
+      }
+
       <div class="search-section">
         <label for="isbn-input" class="search-label">
           Introduce el ISBN del libro
@@ -28,14 +34,34 @@
             class="search-input"
             [(ngModel)]="isbn"
             placeholder="Ejemplo: 9780545010221"
-            [disabled]="isSearching() || isAdding()"
+            [disabled]="isSearching() || isAdding() || isScannerActive()"
             (keyup.enter)="onSearch()"
           />
           <button
             type="button"
+            class="btn btn-icon"
+            (click)="toggleScanner()"
+            [disabled]="isSearching() || isAdding()"
+            [class.active]="isScannerActive()"
+            title="Escanear código de barras"
+          >
+            @if (isScannerActive()) {
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            } @else {
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+            }
+          </button>
+          <button
+            type="button"
             class="btn btn-primary"
             (click)="onSearch()"
-            [disabled]="isSearching() || isAdding() || !isbn().trim()"
+            [disabled]="isSearching() || isAdding() || !isbn().trim() || isScannerActive()"
           >
             @if (isSearching()) {
               Buscando...
@@ -45,9 +71,26 @@
           </button>
         </div>
         <p class="search-hint">
-          Puedes introducir un ISBN-10 o ISBN-13
+          Puedes introducir un ISBN-10 o ISBN-13, o escanear el código de barras
         </p>
       </div>
+
+      @if (isScannerActive()) {
+        <div class="scanner-section">
+          <div class="scanner-container">
+            <zxing-scanner
+              (scanSuccess)="onScanSuccess($event)"
+              (scanError)="onScanError($event)"
+              (permissionResponse)="onPermissionResponse($event)"
+              [formats]="allowedFormats"
+            ></zxing-scanner>
+            <div class="scanner-overlay">
+              <div class="scanner-frame"></div>
+              <p class="scanner-instruction">Enfoca el código de barras del libro</p>
+            </div>
+          </div>
+        </div>
+      }
 
       @if (isSearching()) {
         <div class="loading">
