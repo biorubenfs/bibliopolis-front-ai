@@ -16,6 +16,8 @@ import { RemoveBookModalComponent } from './remove-book-modal/remove-book-modal.
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LibraryBooksComponent implements OnInit {
+  libraryName = signal<string>('');
+  libraryDescription = signal<string>('');
   private libraryService = inject(LibraryService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -42,6 +44,16 @@ export class LibraryBooksComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.libraryId.set(id);
+      this.libraryService.getLibrary(id).subscribe({
+        next: (response) => {
+          const attrs = response.results.attributes;
+          this.libraryName.set(attrs.name);
+          this.libraryDescription.set(attrs.description);
+        },
+        error: (error: Error) => {
+          this.errorMessage.set(error.message);
+        }
+      });
       this.loadBooks();
     } else {
       this.router.navigate(['/libraries']);

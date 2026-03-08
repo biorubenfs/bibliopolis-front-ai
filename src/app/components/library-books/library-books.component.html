@@ -13,7 +13,10 @@
           </a>
         </div>
         <div class="header-title-section">
-          <h2>Libros de la biblioteca</h2>
+          <div class="library-header-info">
+            <h2 class="library-title">{{ libraryName() }}</h2>
+            <div class="library-description">{{ libraryDescription() }}</div>
+          </div>
           <button class="btn btn-primary" (click)="openAddBookModal()" type="button">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="12" y1="5" x2="12" y2="19"/>
