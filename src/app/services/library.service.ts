@@ -33,6 +33,15 @@ export class LibraryService {
     );
   }
 
+  getLibrary(libraryId: string): Observable<LibraryResponse> {
+    return this.http.get<LibraryResponse>(
+      `${environment.apiUrl}/libraries/${libraryId}`,
+      { withCredentials: true }
+    ).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   getLibraryBooks(libraryId: string, skip: number = 0, limit: number = 10): Observable<UserBooksResponse> {
     let params = new HttpParams()
       .set('libraryId', libraryId)
@@ -98,6 +107,18 @@ export class LibraryService {
     );
   }
 
+  downloadLibraryBooksPdf(libraryId: string): Observable<Blob> {
+    const url = `${environment.apiUrl}/user-books/download`;
+    const params = new HttpParams().set('libraryId', libraryId);
+    return this.http.get(url, {
+      params,
+      withCredentials: true,
+      responseType: 'blob'
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'Ha ocurrido un error inesperado';
     
@@ -111,4 +132,6 @@ export class LibraryService {
     
     return throwError(() => new Error(errorMessage));
   }
+
+  
 }

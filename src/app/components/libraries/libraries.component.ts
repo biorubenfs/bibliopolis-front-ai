@@ -8,6 +8,7 @@ import { CreateLibraryModalComponent } from './create-library-modal/create-libra
 import { EditLibraryModalComponent } from './edit-library-modal/edit-library-modal.component';
 import { DeleteLibraryModalComponent } from './delete-library-modal/delete-library-modal.component';
 import { PaginationComponent } from '../shared/pagination/pagination.component';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-libraries',
@@ -17,6 +18,7 @@ import { PaginationComponent } from '../shared/pagination/pagination.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LibrariesComponent implements OnInit {
+  private environment = environment;
   private libraryService = inject(LibraryService);
 
   libraries = signal<Library[]>([]);
@@ -35,6 +37,24 @@ export class LibrariesComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadLibraries();
+  }
+
+  downloadLibraryPdf(library: Library): void {
+    this.libraryService.downloadLibraryBooksPdf(library.id)
+      .subscribe({
+        next: (blob) => {
+          const link = document.createElement('a');
+          link.href = window.URL.createObjectURL(blob);
+          link.download = `${library.name}.pdf`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(link.href);
+        },
+        error: () => {
+          alert('No se pudo descargar el PDF de la biblioteca.');
+        }
+      });
   }
 
   loadLibraries(): void {

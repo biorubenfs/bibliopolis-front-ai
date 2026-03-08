@@ -49,7 +49,8 @@
                 <th>Nombre</th>
                 <th>Descripción</th>
                 <th class="books-header">Libros</th>
-                <th>Fecha de creación</th>
+                <th>Creado</th>
+                <th>Modificado</th>
                 <th class="actions-header">Acciones</th>
               </tr>
             </thead>
@@ -72,6 +73,7 @@
                     </span>
                   </td>
                   <td class="library-date">{{ library.createdAt | date: 'dd/MM/yyyy' }}</td>
+                  <td class="library-date">{{ library.updatedAt | date: 'dd/MM/yyyy' }}</td>
                   <td class="library-actions">
                     <a [routerLink]="['/libraries', library.id, 'books']" class="btn-icon" title="Ver libros">
                       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -79,6 +81,13 @@
                         <circle cx="12" cy="12" r="3"/>
                       </svg>
                     </a>
+                    <button (click)="downloadLibraryPdf(library)" class="btn-icon" title="Descargar PDF" type="button">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3v12"/>
+                        <polyline points="7 11 12 16 17 11"/>
+                        <path d="M5 21h14"/>              
+                      </svg>
+                    </button>
                     <button (click)="openEditModal(library)" class="btn-icon" title="Editar" type="button">
                       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
