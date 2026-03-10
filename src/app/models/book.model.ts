@@ -1,3 +1,8 @@
+export enum BooksSource {
+  OPEN_LIBRARY = 'open_library',
+  GOOGLE_BOOKS = 'google_books'
+}
+
 export interface Book {
   id: string;
   title: string;
@@ -27,9 +32,13 @@ export interface BooksResponse {
 export interface ExternalBook {
   title: string;
   authors: string[];
-  isbn13: string;
-  isbn10: string;
+  isbn13: string | null;
+  isbn10: string | null;
   coverUrl: string;
+  cover: {
+    source: BooksSource | null;
+    value: string | null;
+  };
 }
 
 export interface ExternalBookResponse {
@@ -40,7 +49,12 @@ export interface ExternalBookResponse {
 }
 
 export interface AddBookToLibraryDto {
-  isbn: string;
-  rating?: number | null;
-  notes?: string | null;
+  title: string;
+  isbn13: string | null;
+  isbn10: string | null;
+  authors: string[];
+  cover: {
+    source: BooksSource | null;
+    value: string | null;
+  };
 }

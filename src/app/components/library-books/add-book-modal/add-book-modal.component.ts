@@ -78,7 +78,11 @@ export class AddBookModalComponent {
     this.errorMessage.set('');
 
     const data = {
-      isbn: book.isbn13 || book.isbn10
+      title: book.title,
+      isbn13: book.isbn13,
+      isbn10: book.isbn10,
+      authors: book.authors,
+      cover: book.cover 
     };
 
     this.libraryService.addBookToLibrary(this.libraryId(), data).subscribe({
