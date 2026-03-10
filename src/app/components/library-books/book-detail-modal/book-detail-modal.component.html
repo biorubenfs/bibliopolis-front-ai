@@ -120,7 +120,7 @@
       <button
         type="button"
         class="btn btn-danger"
-        (click)="onRemoveFromLibrary()"
+        (click)="onRemoveFromLibrary($event)"
         [disabled]="isDeleting() || isSaving()"
       >
         @if (isDeleting()) {
@@ -132,3 +132,12 @@
     </div>
   </div>
 </div>
+
+@if (showRemoveBookModal() && bookToRemove()) {
+  <app-remove-book-modal
+    [book]="bookToRemove()!"
+    [libraryId]="libraryId()"
+    (closeModal)="closeRemoveBookModal()"
+    (bookRemoved)="onBookRemovedFromModal()"
+  />
+}

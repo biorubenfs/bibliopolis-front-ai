@@ -3,10 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { LibraryService } from '../../../services/library.service';
 import { BookService } from '../../../services/book.service';
 import { UserBook } from '../../../models/user-book.model';
+import { RemoveBookModalComponent } from '../remove-book-modal/remove-book-modal.component';
 
 @Component({
   selector: 'app-book-detail-modal',
-  imports: [FormsModule],
+  imports: [FormsModule, RemoveBookModalComponent],
   templateUrl: './book-detail-modal.component.html',
   styleUrl: './book-detail-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -20,6 +21,7 @@ export class BookDetailModalComponent {
   closeModal = output<void>();
   bookRemoved = output<void>();
   bookUpdated = output<void>();
+  bookToRemove = signal<UserBook | null>(null);
 
   isDeleting = signal<boolean>(false);
   isSaving = signal<boolean>(false);
@@ -30,6 +32,9 @@ export class BookDetailModalComponent {
   editableRating = signal<number | null>(null);
   editableNotes = signal<string>('');
   hoveredStar = signal<number | null>(null);
+
+  // Modals
+  showRemoveBookModal = signal<boolean>(false);
 
   maxNotesLength = 150;
 
@@ -55,20 +60,20 @@ export class BookDetailModalComponent {
     this.closeModal.emit();
   }
 
-  onRemoveFromLibrary(): void {
-    this.isDeleting.set(true);
-    this.errorMessage.set('');
+  onRemoveFromLibrary(event: Event): void {
+    event.stopPropagation();
+    this.bookToRemove.set(this.book());
+    this.showRemoveBookModal.set(true);
+  }
 
-    this.libraryService.removeBookFromLibrary(this.libraryId(), this.book().id).subscribe({
-      next: () => {
-        this.isDeleting.set(false);
-        this.bookRemoved.emit();
-      },
-      error: (error: Error) => {
-        this.errorMessage.set(error.message);
-        this.isDeleting.set(false);
-      }
-    });
+  onBookRemovedFromModal(): void {
+    this.closeRemoveBookModal();
+    this.bookRemoved.emit();
+  }
+
+  closeRemoveBookModal(): void {
+    this.showRemoveBookModal.set(false);
+    this.bookToRemove.set(null);
   }
 
   onSaveChanges(): void {
