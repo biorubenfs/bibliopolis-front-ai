@@ -18,6 +18,7 @@ export class MyBooksComponent implements OnInit {
   private userService = inject(UserService);
   private router = inject(Router);
   private searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+  private isInitialLoad = true;
 
   books = signal<UserBook[]>([]);
   isLoading = signal<boolean>(true);
@@ -35,27 +36,31 @@ export class MyBooksComponent implements OnInit {
   selectedBook = signal<UserBook | null>(null);
 
   constructor() {
-    // Debounce automático para búsquedas
+    // Automatic debounce for searches
     effect(() => {
       const query = this.searchQuery();
       
-      // Limpiar el timer anterior
+      // Clear the previous timer
       if (this.searchDebounceTimer) {
         clearTimeout(this.searchDebounceTimer);
       }
       
-      // Solo buscar si hay 3+ caracteres o si está vacío (para mostrar todos)
+      // Only search if there are 3+ characters or if it's empty (to show all)
       if (query.length === 0 || query.length >= 3) {
+        // First load: without delay. Subsequent searches: with debounce
+        const delay = this.isInitialLoad ? 0 : 300;
+        
         this.searchDebounceTimer = setTimeout(() => {
+          this.isInitialLoad = false;
           this.currentPage.set(1);
           this.loadBooks();
-        }, 1000);
+        }, delay);
       }
     });
   }
 
   ngOnInit(): void {
-    this.loadBooks();
+    // The initial load is handled automatically by the effect()
   }
 
   loadBooks(): void {
