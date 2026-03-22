@@ -101,14 +101,78 @@
         </div>
       }
 
-      @if (searchPerformed() && !isSearching() && !foundBook() && !errorMessage()) {
+      @if (bookNotFound() && !manualEntryMode()) {
         <div class="empty-state">
           <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="8"/>
             <path d="m21 21-4.35-4.35"/>
           </svg>
           <h4>No se encontró el libro</h4>
-          <p>No pudimos encontrar un libro con ese ISBN. Verifica que sea correcto.</p>
+          <p>No pudimos encontrar un libro con ese ISBN en nuestras fuentes de datos.</p>
+          <button 
+            type="button" 
+            class="btn btn-primary" 
+            (click)="enableManualEntry()"
+          >
+            Agregar libro manualmente
+          </button>
+        </div>
+      }
+
+      @if (manualEntryMode()) {
+        <div class="manual-entry-form">
+          <div class="form-header">
+            <h4>Agregar libro manualmente</h4>
+            <p class="form-description">Completa los datos del libro que deseas agregar</p>
+          </div>
+
+          <div class="form-group">
+            <label for="manual-title" class="form-label">
+              Título <span class="required">*</span>
+            </label>
+            <input
+              id="manual-title"
+              type="text"
+              class="form-input"
+              [ngModel]="manualBook().title"
+              (ngModelChange)="updateManualTitle($event)"
+              placeholder="Ejemplo: El Quijote"
+              [disabled]="isAdding()"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="manual-isbn" class="form-label">
+              ISBN <span class="required">*</span>
+            </label>
+            <input
+              id="manual-isbn"
+              type="text"
+              inputmode="numeric"
+              class="form-input"
+              [ngModel]="manualBook().isbn"
+              (ngModelChange)="updateManualIsbn($event)"
+              placeholder="ISBN-10 o ISBN-13"
+              [disabled]="isAdding()"
+            />
+            <p class="field-hint">Puede ser ISBN-10 (10 dígitos) o ISBN-13 (13 dígitos)</p>
+          </div>
+
+          <div class="form-group">
+            <label for="manual-authors" class="form-label">
+              Autores <span class="required">*</span>
+            </label>
+            <input
+              id="manual-authors"
+              type="text"
+              class="form-input"
+              [ngModel]="manualBook().authors"
+              (ngModelChange)="updateManualAuthors($event)"
+              placeholder="Separa múltiples autores con comas: Autor 1, Autor 2"
+              [disabled]="isAdding()"
+            />
+            <p class="field-hint">Separa múltiples autores con comas</p>
+          </div>
         </div>
       }
 
@@ -152,20 +216,20 @@
     </div>
 
     <div class="modal-actions">
-      <button
-        type="button"
-        class="btn btn-secondary"
-        (click)="onClose()"
-        [disabled]="isSearching() || isAdding()"
-      >
-        Cancelar
-      </button>
-      @if (foundBook()) {
+      @if (manualEntryMode()) {
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="cancelManualEntry()"
+          [disabled]="isAdding()"
+        >
+          Volver
+        </button>
         <button
           type="button"
           class="btn btn-primary"
-          (click)="onAddBook()"
-          [disabled]="isSearching() || isAdding()"
+          (click)="onAddManualBook()"
+          [disabled]="!isManualFormValid() || isAdding()"
         >
           @if (isAdding()) {
             Añadiendo...
@@ -173,6 +237,29 @@
             Añadir a la biblioteca
           }
         </button>
+      } @else {
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onClose()"
+          [disabled]="isSearching() || isAdding()"
+        >
+          Cancelar
+        </button>
+        @if (foundBook()) {
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="onAddBook()"
+            [disabled]="isSearching() || isAdding()"
+          >
+            @if (isAdding()) {
+              Añadiendo...
+            } @else {
+              Añadir a la biblioteca
+            }
+          </button>
+        }
       }
     </div>
   </div>
