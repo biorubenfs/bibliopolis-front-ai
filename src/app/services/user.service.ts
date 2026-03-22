@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, throwError, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { ApiError } from '../models/error.model';
+import { UserBooksResponse } from '../models/user-book.model';
 
 export interface UpdateProfileDto {
   name: string;
@@ -35,6 +36,17 @@ export class UserService {
       data,
       { withCredentials: true }
     ).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  getUserBooks(skip: number, limit: number, search?: string): Observable<UserBooksResponse> {
+    let url = `${environment.apiUrl}/user-books?skip=${skip}&limit=${limit}`;
+    if (search && search.trim()) {
+      url += `&search=${encodeURIComponent(search.trim())}`;
+    }
+    
+    return this.http.get<UserBooksResponse>(url, { withCredentials: true }).pipe(
       catchError(this.handleError)
     );
   }
