@@ -36,7 +36,7 @@
     align-items: center;
     justify-content: center;
 
-    svg {
+    svg, lucide-icon {
       color: var(--color-error);
     }
 
@@ -44,7 +44,7 @@
       background-color: var(--color-error);
       transform: scale(1.1);
 
-      svg {
+      svg, lucide-icon {
         color: var(--color-white);
       }
     }

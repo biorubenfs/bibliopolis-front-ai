@@ -1,13 +1,16 @@
 import { Component, ChangeDetectionStrategy, input, output, computed } from '@angular/core';
 import { UserBook } from '../../../models/user-book.model';
+import { LucideAngularModule, Book, Trash2 } from 'lucide-angular';
 
 @Component({
   selector: 'app-user-book-card',
+  imports: [LucideAngularModule],
   templateUrl: './user-book-card.component.html',
   styleUrl: './user-book-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserBookCardComponent {
+  readonly icons = { Book, Trash2 };
   book = input.required<UserBook>();
   showDeleteButton = input<boolean>(false);
   showLibrariesCount = input<boolean>(false);

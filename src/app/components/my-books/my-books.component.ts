@@ -7,15 +7,17 @@ import { PaginationComponent } from '../shared/pagination/pagination.component';
 import { BookDetailModalComponent } from '../shared/book-detail-modal/book-detail-modal.component';
 import { FormsModule } from '@angular/forms';
 import { UserBookCardComponent } from '../shared/user-book-card/user-book-card.component';
+import { LucideAngularModule, Search, Book } from 'lucide-angular';
 
 @Component({
   selector: 'app-my-books',
-  imports: [NavbarComponent, PaginationComponent, BookDetailModalComponent, FormsModule, UserBookCardComponent],
+  imports: [NavbarComponent, PaginationComponent, BookDetailModalComponent, FormsModule, UserBookCardComponent, LucideAngularModule],
   templateUrl: './my-books.component.html',
   styleUrl: './my-books.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MyBooksComponent implements OnInit {
+  readonly icons = { Search, Book };
   private userService = inject(UserService);
   private router = inject(Router);
   private searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;

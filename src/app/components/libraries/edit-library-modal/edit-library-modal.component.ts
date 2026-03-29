@@ -2,15 +2,17 @@ import { Component, ChangeDetectionStrategy, inject, output, signal, input, OnIn
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LibraryService } from '../../../services/library.service';
 import { CreateLibraryDto, Library } from '../../../models/library.model';
+import { LucideAngularModule, X } from 'lucide-angular';
 
 @Component({
   selector: 'app-edit-library-modal',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, LucideAngularModule],
   templateUrl: './edit-library-modal.component.html',
   styleUrl: './edit-library-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditLibraryModalComponent implements OnInit {
+  readonly icons = { X };
   private fb = inject(FormBuilder);
   private libraryService = inject(LibraryService);
 

@@ -1,15 +1,17 @@
 import { Component, ChangeDetectionStrategy, inject, output, signal, input } from '@angular/core';
 import { LibraryService } from '../../../services/library.service';
 import { Library } from '../../../models/library.model';
+import { LucideAngularModule, X, AlertTriangle } from 'lucide-angular';
 
 @Component({
   selector: 'app-delete-library-modal',
-  imports: [],
+  imports: [LucideAngularModule],
   templateUrl: './delete-library-modal.component.html',
   styleUrl: './delete-library-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DeleteLibraryModalComponent {
+  readonly icons = { X, AlertTriangle };
   private libraryService = inject(LibraryService);
 
   library = input.required<Library>();
