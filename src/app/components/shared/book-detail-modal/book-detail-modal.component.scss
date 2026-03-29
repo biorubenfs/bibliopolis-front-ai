@@ -102,7 +102,10 @@
     flex-direction: column;
 
     @media (min-width: 640px) {
-      flex-direction: row;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      grid-template-rows: auto auto;
+      gap: 1.5rem 2rem;
     }
   }
 
@@ -110,6 +113,11 @@
     flex-shrink: 0;
     display: flex;
     justify-content: center;
+
+    @media (min-width: 640px) {
+      grid-column: 1;
+      grid-row: 1;
+    }
 
     .book-cover {
       width: 200px;
@@ -139,6 +147,11 @@
   .book-info-section {
     flex: 1;
     min-width: 0;
+
+    @media (min-width: 640px) {
+      grid-column: 2;
+      grid-row: 1;
+    }
 
     .book-title {
       font-size: 1.5rem;
@@ -213,49 +226,65 @@
             color: var(--color-primary);
           }
         }
+      }
+    }
+  }
 
-        &.notes-field {
-          .notes-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
+  .book-notes-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 
-            .notes-counter {
-              font-size: 0.75rem;
-              color: var(--color-secondary);
-              
-              &.warning {
-                color: #ff9800;
-                font-weight: 600;
-              }
-            }
-          }
+    @media (min-width: 640px) {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
 
-          .notes-textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: var(--color-primary);
-            resize: vertical;
-            min-height: 120px;
-            transition: border-color 0.2s;
+    .notes-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
 
-            &:focus {
-              outline: none;
-              border-color: var(--color-accent);
-              box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            }
+      .field-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--color-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
 
-            &::placeholder {
-              color: #bdbdbd;
-            }
-          }
+      .notes-counter {
+        font-size: 0.75rem;
+        color: var(--color-secondary);
+        
+        &.warning {
+          color: #ff9800;
+          font-weight: 600;
         }
+      }
+    }
+
+    .notes-textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--color-primary);
+      resize: vertical;
+      min-height: 80px;
+      transition: border-color 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      &::placeholder {
+        color: #bdbdbd;
       }
     }
   }

@@ -9,15 +9,17 @@ import { EditLibraryModalComponent } from './edit-library-modal/edit-library-mod
 import { DeleteLibraryModalComponent } from './delete-library-modal/delete-library-modal.component';
 import { PaginationComponent } from '../shared/pagination/pagination.component';
 import { environment } from '../../../environments/environment';
+import { LucideAngularModule, Search, Plus, Eye, Download, Edit2, Trash2, Book } from 'lucide-angular';
 
 @Component({
   selector: 'app-libraries',
-  imports: [NavbarComponent, DatePipe, RouterLink, CreateLibraryModalComponent, EditLibraryModalComponent, DeleteLibraryModalComponent, PaginationComponent],
+  imports: [NavbarComponent, DatePipe, RouterLink, CreateLibraryModalComponent, EditLibraryModalComponent, DeleteLibraryModalComponent, PaginationComponent, LucideAngularModule],
   templateUrl: './libraries.component.html',
   styleUrl: './libraries.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LibrariesComponent implements OnInit {
+  readonly icons = { Search, Plus, Eye, Download, Edit2, Trash2, Book };
   private environment = environment;
   private libraryService = inject(LibraryService);
 

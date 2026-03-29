@@ -1,13 +1,15 @@
 import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
+import { LucideAngularModule, ChevronLeft, ChevronRight } from 'lucide-angular';
 
 @Component({
   selector: 'app-pagination',
-  imports: [],
+  imports: [LucideAngularModule],
   templateUrl: './pagination.component.html',
   styleUrl: './pagination.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaginationComponent {
+  readonly icons = { ChevronLeft, ChevronRight };
   currentPage = input.required<number>();
   totalPages = input.required<number>();
   totalItems = input.required<number>();

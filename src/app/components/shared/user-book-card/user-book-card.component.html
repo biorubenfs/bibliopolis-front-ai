@@ -1,0 +1,48 @@
+<div class="book-card" (click)="onCardClick()">
+  @if (showDeleteButton()) {
+    <button 
+      class="btn-delete" 
+      (click)="onDeleteClick($event)" 
+      title="Eliminar de la biblioteca"
+      type="button"
+    >
+      <lucide-icon [img]="icons.Trash2" [size]="16" />
+    </button>
+  }
+  
+  <div class="book-cover">
+    @if (book().bookCoverUrl) {
+      <img [src]="book().bookCoverUrl" [alt]="book().bookTitle" loading="lazy" />
+    } @else {
+      <div class="no-cover">
+        <lucide-icon [img]="icons.Book" [size]="48" />
+      </div>
+    }
+  </div>
+  
+  <div class="book-info">
+    <h3 class="book-title">{{ book().bookTitle }}</h3>
+    <p class="book-authors">{{ authorsText() }}</p>
+    
+    @if (book().rating !== null) {
+      <div class="book-rating">
+        <div class="rating-stars">
+          @for (isActive of ratingStars(); track $index) {
+            <span class="star" [class.active]="isActive">★</span>
+          }
+        </div>
+        <span class="rating-value">{{ book().rating }}/10</span>
+      </div>
+    }
+
+    <div class="book-isbn">
+      <small>ISBN-13: {{ book().bookIsbn13 }}</small>
+    </div>
+    
+    @if (showLibrariesCount() && book().libraries && book().libraries.length > 0) {
+      <div class="book-libraries">
+        <small>En {{ book().libraries.length }} biblioteca{{ book().libraries.length > 1 ? 's' : '' }}</small>
+      </div>
+    }
+  </div>
+</div>

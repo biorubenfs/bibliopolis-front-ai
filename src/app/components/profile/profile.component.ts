@@ -3,15 +3,17 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService, UpdateProfileDto, UpdatePasswordDto } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { NavbarComponent } from '../navbar/navbar.component';
+import { LucideAngularModule, User, Lock } from 'lucide-angular';
 
 @Component({
   selector: 'app-profile',
-  imports: [NavbarComponent, ReactiveFormsModule],
+  imports: [NavbarComponent, ReactiveFormsModule, LucideAngularModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProfileComponent implements OnInit {
+  readonly icons = { User, Lock };
   private fb = inject(FormBuilder);
   private userService = inject(UserService);
   authService = inject(AuthService);

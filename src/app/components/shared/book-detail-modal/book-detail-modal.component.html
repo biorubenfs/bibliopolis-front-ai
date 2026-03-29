@@ -75,23 +75,23 @@
                 <span class="field-value">{{ book().bookIsbn10 }}</span>
               </div>
             }
-
-            <div class="book-field notes-field">
-              <div class="notes-header">
-                <span class="field-label">Notas:</span>
-                <span class="notes-counter" [class.warning]="notesRemaining() < 20">
-                  {{ notesRemaining() }} caracteres restantes
-                </span>
-              </div>
-              <textarea
-                class="notes-textarea"
-                [(ngModel)]="editableNotes"
-                [maxlength]="maxNotesLength"
-                placeholder="Añade tus notas personales sobre este libro..."
-                rows="6"
-              ></textarea>
-            </div>
           </div>
+        </div>
+
+        <div class="book-notes-section">
+          <div class="notes-header">
+            <span class="field-label">Notas:</span>
+            <span class="notes-counter" [class.warning]="notesRemaining() < 20">
+              {{ notesRemaining() }} caracteres restantes
+            </span>
+          </div>
+          <textarea
+            class="notes-textarea"
+            [(ngModel)]="editableNotes"
+            [maxlength]="maxNotesLength"
+            placeholder="Añade tus notas personales sobre este libro..."
+            rows="3"
+          ></textarea>
         </div>
       </div>
     </div>

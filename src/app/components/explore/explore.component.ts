@@ -3,15 +3,17 @@ import { BookService } from '../../services/book.service';
 import { Book } from '../../models/book.model';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { PaginationComponent } from '../shared/pagination/pagination.component';
+import { LucideAngularModule, Book as BookIcon } from 'lucide-angular';
 
 @Component({
   selector: 'app-explore',
-  imports: [NavbarComponent, PaginationComponent],
+  imports: [NavbarComponent, PaginationComponent, LucideAngularModule],
   templateUrl: './explore.component.html',
   styleUrl: './explore.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ExploreComponent implements OnInit {
+  readonly icons = { Book: BookIcon };
   private bookService = inject(BookService);
 
   books = signal<Book[]>([]);

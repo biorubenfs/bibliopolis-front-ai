@@ -4,13 +4,14 @@ import { LibraryService } from '../../services/library.service';
 import { UserBook } from '../../models/user-book.model';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { PaginationComponent } from '../shared/pagination/pagination.component';
-import { BookDetailModalComponent } from './book-detail-modal/book-detail-modal.component';
+import { BookDetailModalComponent } from '../shared/book-detail-modal/book-detail-modal.component';
 import { AddBookModalComponent } from './add-book-modal/add-book-modal.component';
 import { RemoveBookModalComponent } from './remove-book-modal/remove-book-modal.component';
+import { UserBookCardComponent } from '../shared/user-book-card/user-book-card.component';
 
 @Component({
   selector: 'app-library-books',
-  imports: [NavbarComponent, RouterLink, PaginationComponent, BookDetailModalComponent, AddBookModalComponent, RemoveBookModalComponent],
+  imports: [NavbarComponent, RouterLink, PaginationComponent, BookDetailModalComponent, AddBookModalComponent, RemoveBookModalComponent, UserBookCardComponent],
   templateUrl: './library-books.component.html',
   styleUrl: './library-books.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -99,20 +100,6 @@ export class LibraryBooksComponent implements OnInit {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  getRatingStars(rating: number | null): boolean[] {
-    const stars: boolean[] = [];
-    const ratingValue = rating || 0;
-    for (let i = 0; i < 10; i++) {
-      stars.push(i < ratingValue);
-    }
-    return stars;
-  }
-
-  getAuthorsText(authors: string[]): string {
-    if (!authors || authors.length === 0) return 'Autor desconocido';
-    return authors.join(', ');
-  }
-
   openDetailModal(book: UserBook): void {
     this.selectedBook.set(book);
     this.showDetailModal.set(true);
@@ -145,8 +132,7 @@ export class LibraryBooksComponent implements OnInit {
     this.loadBooks();
   }
 
-  openRemoveBookModal(event: Event, book: UserBook): void {
-    event.stopPropagation();
+  onRemoveBook(book: UserBook): void {
     this.bookToRemove.set(book);
     this.showRemoveBookModal.set(true);
   }
@@ -159,9 +145,5 @@ export class LibraryBooksComponent implements OnInit {
   onBookRemovedFromList(): void {
     this.closeRemoveBookModal();
     this.loadBooks();
-  }
-
-  onRemoveBook(event: Event, book: UserBook): void {
-    this.openRemoveBookModal(event, book);
   }
 }

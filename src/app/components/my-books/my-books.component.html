@@ -12,10 +12,7 @@
         </div>
         <div class="search-section">
           <div class="search-input-wrapper">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"/>
-              <path d="m21 21-4.35-4.35"/>
-            </svg>
+            <lucide-icon [img]="icons.Search" [size]="18" />
             <input 
               type="text" 
               class="search-input" 
@@ -43,10 +40,7 @@
     @if (!isLoading() && !errorMessage()) {
       @if (books().length === 0) {
         <div class="empty-state">
-          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-          </svg>
+          <lucide-icon [img]="icons.Book" [size]="64" />
           <h3>No se encontraron libros</h3>
           @if (searchQuery()) {
             <p>No hay libros que coincidan con tu búsqueda</p>
@@ -57,45 +51,11 @@
       } @else {
         <div class="books-grid">
           @for (book of books(); track book.id) {
-            <div class="book-card" (click)="openDetailModal(book)">
-              <div class="book-cover">
-                @if (book.bookCoverUrl) {
-                  <img [src]="book.bookCoverUrl" [alt]="book.bookTitle" loading="lazy" />
-                } @else {
-                  <div class="no-cover">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-                    </svg>
-                  </div>
-                }
-              </div>
-              <div class="book-info">
-                <h3 class="book-title">{{ book.bookTitle }}</h3>
-                <p class="book-authors">{{ getAuthorsText(book.bookAuthors) }}</p>
-                
-                @if (book.rating !== null) {
-                  <div class="book-rating">
-                    <div class="rating-stars">
-                      @for (isActive of getRatingStars(book.rating); track $index) {
-                        <span class="star" [class.active]="isActive">★</span>
-                      }
-                    </div>
-                    <span class="rating-value">{{ book.rating }}/10</span>
-                  </div>
-                }
-
-                <div class="book-isbn">
-                  <small>ISBN-13: {{ book.bookIsbn13 }}</small>
-                </div>
-                
-                @if (book.libraries && book.libraries.length > 0) {
-                  <div class="book-libraries">
-                    <small>En {{ book.libraries.length }} biblioteca{{ book.libraries.length > 1 ? 's' : '' }}</small>
-                  </div>
-                }
-              </div>
-            </div>
+            <app-user-book-card
+              [book]="book"
+              [showLibrariesCount]="true"
+              (cardClick)="openDetailModal($event)"
+            />
           }
         </div>
         

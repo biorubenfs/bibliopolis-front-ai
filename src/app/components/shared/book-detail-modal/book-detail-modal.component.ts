@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { LibraryService } from '../../../services/library.service';
 import { BookService } from '../../../services/book.service';
 import { UserBook } from '../../../models/user-book.model';
-import { RemoveBookModalComponent } from '../remove-book-modal/remove-book-modal.component';
+import { RemoveBookModalComponent } from '../../library-books/remove-book-modal/remove-book-modal.component';
 
 @Component({
   selector: 'app-book-detail-modal',

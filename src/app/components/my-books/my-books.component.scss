@@ -14,7 +14,7 @@
   width: 100%;
   max-width: 500px;
 
-  svg {
+  svg, lucide-icon {
     position: absolute;
     left: 1rem;
     top: 50%;
@@ -40,16 +40,5 @@
 
   &::placeholder {
     color: #9ca3af;
-  }
-}
-
-.book-libraries {
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid #e5e7eb;
-  
-  small {
-    color: #6b7280;
-    font-size: 0.8125rem;
   }
 }
