@@ -4,7 +4,7 @@ import { UserService } from '../../services/user.service';
 import { UserBook, UserBookItem, UserBooksResponse } from '../../models/user-book.model';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { PaginationComponent } from '../shared/pagination/pagination.component';
-import { BookDetailModalComponent } from '../library-books/book-detail-modal/book-detail-modal.component';
+import { BookDetailModalComponent } from '../shared/book-detail-modal/book-detail-modal.component';
 import { FormsModule } from '@angular/forms';
 
 @Component({

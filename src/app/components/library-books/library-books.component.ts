@@ -4,7 +4,7 @@ import { LibraryService } from '../../services/library.service';
 import { UserBook } from '../../models/user-book.model';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { PaginationComponent } from '../shared/pagination/pagination.component';
-import { BookDetailModalComponent } from './book-detail-modal/book-detail-modal.component';
+import { BookDetailModalComponent } from '../shared/book-detail-modal/book-detail-modal.component';
 import { AddBookModalComponent } from './add-book-modal/add-book-modal.component';
 import { RemoveBookModalComponent } from './remove-book-modal/remove-book-modal.component';
 
