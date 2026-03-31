@@ -57,7 +57,7 @@
                       <span>{{ library.name }}</span>
                     </div>
                   </td>
-                  <td class="library-description">{{ library.description }}</td>
+                  <td class="library-description" [title]="library.description || ''">{{ library.description }}</td>
                   <td class="library-books">
                     <span class="badge">
                       {{ library.books.length }}
