@@ -1,9 +1,9 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { catchError, tap, throwError, Observable, of, map } from 'rxjs';
+import { catchError, tap, throwError, Observable, of, map, switchMap, BehaviorSubject, filter, take, switchMap as rxSwitchMap } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { LoginCredentials, UserResponse, User } from '../models/user.model';
+import { LoginCredentials, UserResponse, User, AuthResponse } from '../models/user.model';
 import { ApiError } from '../models/error.model';
 
 @Injectable({
@@ -16,25 +16,31 @@ export class AuthService {
   // Signals for auth state
   isAuthenticated = signal<boolean>(false);
   currentUser = signal<User | null>(null);
+  accessToken = signal<string | null>(null);
   private authCheckComplete = signal<boolean>(false);
+  
+  // Refresh token management
+  private refreshTokenInProgress = false;
+  private refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
   constructor() {
-    // Check if user is authenticated on initialization
-    this.checkAuthStatus();
+    // Auth check will be handled by checkAuth() method when guards or components need it
   }
 
-  login(credentials: LoginCredentials): Observable<UserResponse> {
-    return this.http.post<UserResponse>(
+  login(credentials: LoginCredentials): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(
       `${environment.apiUrl}/auth/login`,
       credentials,
       { withCredentials: true }
     ).pipe(
       tap((response) => {
+        // Store access token
+        this.accessToken.set(response.results.attributes.accessToken);
         // Mark as authenticated on successful login
         this.isAuthenticated.set(true);
-        // Set user info from response
-        this.currentUser.set(response.results.attributes);
         this.authCheckComplete.set(true);
+        // Fetch user data after successful login
+        this.fetchUserData().subscribe();
       }),
       catchError(this.handleError)
     );
@@ -47,13 +53,61 @@ export class AuthService {
       { withCredentials: true }
     ).pipe(
       tap(() => {
-        this.isAuthenticated.set(false);
-        this.currentUser.set(null);
-        this.authCheckComplete.set(false);
+        this.clearAuth();
         this.router.navigate(['/login']);
       }),
-      catchError(this.handleError)
+      catchError((error) => {
+        // Even if logout fails on the server, clear local state
+        this.clearAuth();
+        this.router.navigate(['/login']);
+        return throwError(() => error);
+      })
     );
+  }
+
+  refreshToken(): Observable<string> {
+    // If there's already a refresh in progress, wait for it
+    if (this.refreshTokenInProgress) {
+      return this.refreshTokenSubject.pipe(
+        filter((token) => token !== null),
+        take(1)
+      ) as Observable<string>;
+    }
+
+    // Mark refresh as in progress
+    this.refreshTokenInProgress = true;
+    this.refreshTokenSubject.next(null);
+
+    return this.http.post<AuthResponse>(
+      `${environment.apiUrl}/auth/refresh`,
+      {},
+      { withCredentials: true }
+    ).pipe(
+      tap((response) => {
+        const newToken = response.results.attributes.accessToken;
+        // Update access token
+        this.accessToken.set(newToken);
+        this.isAuthenticated.set(true);
+        // Notify all waiting requests
+        this.refreshTokenSubject.next(newToken);
+        this.refreshTokenInProgress = false;
+      }),
+      map((response) => response.results.attributes.accessToken),
+      catchError((error) => {
+        this.refreshTokenInProgress = false;
+        this.refreshTokenSubject.next(null);
+        this.clearAuth();
+        return throwError(() => error);
+      })
+    );
+  }
+
+  clearAuth(): void {
+    this.isAuthenticated.set(false);
+    this.currentUser.set(null);
+    this.accessToken.set(null);
+    // Mark as complete so guards don't try to refresh
+    this.authCheckComplete.set(true);
   }
 
   // Method for guards to check auth status
@@ -63,61 +117,69 @@ export class AuthService {
       return of(this.isAuthenticated());
     }
 
-    // Otherwise, perform auth check
-    return this.http.get<UserResponse>(
-      `${environment.apiUrl}/auth/me`,
-      { withCredentials: true }
-    ).pipe(
-      map((response) => {
-        // User is authenticated
-        this.isAuthenticated.set(true);
-        this.currentUser.set(response.results.attributes);
+    // If we have an access token, try to fetch user data
+    if (this.accessToken()) {
+      return this.fetchUserData().pipe(
+        map(() => {
+          this.authCheckComplete.set(true);
+          return true;
+        }),
+        catchError(() => {
+          // Token might be expired, try to refresh
+          return this.refreshToken().pipe(
+            switchMap(() => this.fetchUserData()),
+            map(() => {
+              this.authCheckComplete.set(true);
+              return true;
+            }),
+            catchError(() => {
+              this.clearAuth();
+              this.authCheckComplete.set(true);
+              return of(false);
+            })
+          );
+        })
+      );
+    }
+
+    // No access token, try to refresh from cookie
+    return this.refreshToken().pipe(
+      switchMap(() => this.fetchUserData()),
+      map(() => {
         this.authCheckComplete.set(true);
         return true;
       }),
       catchError(() => {
-        // User is not authenticated or token expired
-        this.isAuthenticated.set(false);
-        this.currentUser.set(null);
+        this.clearAuth();
         this.authCheckComplete.set(true);
         return of(false);
       })
     );
   }
 
+  // Simpler check for login guard - only checks current state without trying to refresh
+  isCurrentlyAuthenticated(): boolean {
+    return this.isAuthenticated();
+  }
+
   // Method to force refresh user data (e.g., after profile update)
   refreshUser(): Observable<User> {
+    return this.fetchUserData().pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  private fetchUserData(): Observable<User> {
     return this.http.get<UserResponse>(
       `${environment.apiUrl}/auth/me`,
       { withCredentials: true }
     ).pipe(
       map((response) => {
         this.currentUser.set(response.results.attributes);
-        return response.results.attributes;
-      }),
-      catchError(this.handleError)
-    );
-  }
-
-  private checkAuthStatus(): void {
-    // Call /auth/me to verify if user is authenticated
-    this.http.get<UserResponse>(
-      `${environment.apiUrl}/auth/me`,
-      { withCredentials: true }
-    ).subscribe({
-      next: (response) => {
-        // User is authenticated
         this.isAuthenticated.set(true);
-        this.currentUser.set(response.results.attributes);
-        this.authCheckComplete.set(true);
-      },
-      error: () => {
-        // User is not authenticated or token expired
-        this.isAuthenticated.set(false);
-        this.currentUser.set(null);
-        this.authCheckComplete.set(true);
-      }
-    });
+        return response.results.attributes;
+      })
+    );
   }
 
   private handleError(error: HttpErrorResponse): Observable<never> {

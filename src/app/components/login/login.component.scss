@@ -70,6 +70,12 @@
   margin-bottom: 1.25rem;
   font-size: 0.9rem;
 
+  &.alert-info {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    border: 1px solid rgba(25, 118, 210, 0.3);
+  }
+
   &.alert-error {
     background-color: #ffebee;
     color: var(--color-error);

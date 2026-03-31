@@ -38,6 +38,12 @@
         }
       </div>
 
+      @if (infoMessage()) {
+        <div class="alert alert-info">
+          {{ infoMessage() }}
+        </div>
+      }
+
       @if (errorMessage()) {
         <div class="alert alert-error">
           {{ errorMessage() }}
