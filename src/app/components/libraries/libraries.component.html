@@ -50,7 +50,7 @@
             </thead>
             <tbody>
               @for (library of libraries(); track library.id) {
-                <tr>
+                <tr (click)="navigateToBooks(library)">
                   <td class="library-name">
                     <div class="name-cell">
                       <lucide-icon [img]="icons.Book" [size]="20" />
@@ -66,16 +66,13 @@
                   <td class="library-date">{{ library.createdAt | date: 'dd/MM/yyyy' }}</td>
                   <td class="library-date">{{ library.updatedAt | date: 'dd/MM/yyyy' }}</td>
                   <td class="library-actions">
-                    <a [routerLink]="['/libraries', library.id, 'books']" class="btn-icon" title="Ver libros">
-                      <lucide-icon [img]="icons.Eye" [size]="18" />
-                    </a>
-                    <button (click)="downloadLibraryPdf(library)" class="btn-icon" title="Descargar PDF" type="button">
+                    <button (click)="downloadLibraryPdf(library); $event.stopPropagation()" class="btn-icon" title="Descargar PDF" type="button">
                       <lucide-icon [img]="icons.Download" [size]="18" />
                     </button>
-                    <button (click)="openEditModal(library)" class="btn-icon" title="Editar" type="button">
+                    <button (click)="openEditModal(library); $event.stopPropagation()" class="btn-icon" title="Editar" type="button">
                       <lucide-icon [img]="icons.Edit2" [size]="18" />
                     </button>
-                    <button (click)="openDeleteModal(library)" class="btn-icon btn-icon-danger" title="Eliminar" type="button">
+                    <button (click)="openDeleteModal(library); $event.stopPropagation()" class="btn-icon btn-icon-danger" title="Eliminar" type="button">
                       <lucide-icon [img]="icons.Trash2" [size]="18" />
                     </button>
                   </td>

@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { LibraryService } from '../../services/library.service';
 import { Library } from '../../models/library.model';
 import { NavbarComponent } from '../navbar/navbar.component';
@@ -22,6 +22,7 @@ export class LibrariesComponent implements OnInit {
   readonly icons = { Search, Plus, Eye, Download, Edit2, Trash2, Book };
   private environment = environment;
   private libraryService = inject(LibraryService);
+  private router = inject(Router);
 
   libraries = signal<Library[]>([]);
   isLoading = signal<boolean>(true);
@@ -39,6 +40,10 @@ export class LibrariesComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadLibraries();
+  }
+
+  navigateToBooks(library: Library): void {
+    this.router.navigate(['/libraries', library.id, 'books']);
   }
 
   downloadLibraryPdf(library: Library): void {
