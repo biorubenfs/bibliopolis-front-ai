@@ -24,8 +24,13 @@ export class CreateLibraryModalComponent {
 
   libraryForm = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
-    description: ['', [Validators.required, Validators.minLength(10)]]
+    description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(100)]]
   });
+
+  get remainingChars(): number {
+    const currentLength = this.description?.value?.length || 0;
+    return 100 - currentLength;
+  }
 
   onClose(): void {
     this.closeModal.emit();
