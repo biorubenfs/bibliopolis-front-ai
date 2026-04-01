@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 
@@ -10,11 +10,13 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './login.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   errorMessage = signal<string>('');
+  infoMessage = signal<string>('');
   isLoading = signal<boolean>(false);
 
   loginForm = new FormGroup({
@@ -22,10 +24,19 @@ export class LoginComponent {
     password: new FormControl('', [Validators.required])
   });
 
+  ngOnInit(): void {
+    // Check if redirected due to session expiration
+    const sessionExpired = this.route.snapshot.queryParamMap.get('sessionExpired');
+    if (sessionExpired === 'true') {
+      this.infoMessage.set('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+    }
+  }
+
   onSubmit(): void {
     if (this.loginForm.valid) {
       this.isLoading.set(true);
       this.errorMessage.set('');
+      this.infoMessage.set('');
 
       const { email, password } = this.loginForm.value;
 

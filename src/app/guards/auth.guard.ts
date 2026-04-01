@@ -21,12 +21,11 @@ export const loginGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  return authService.checkAuth().pipe(
-    map(isAuthenticated => {
-      if (!isAuthenticated) {
-        return true;
-      }
-      return router.createUrlTree(['/libraries']);
-    })
-  );
+  // For login page, just check current state without trying to refresh
+  const isAuthenticated = authService.isCurrentlyAuthenticated();
+  
+  if (!isAuthenticated) {
+    return true;
+  }
+  return router.createUrlTree(['/libraries']);
 };

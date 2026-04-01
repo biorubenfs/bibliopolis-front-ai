@@ -16,6 +16,15 @@ export interface UserResponse {
   };
 }
 
+export interface AuthResponse {
+  results: {
+    type: 'auth';
+    attributes: {
+      accessToken: string;
+    };
+  };
+}
+
 export interface LoginCredentials {
   email: string;
   password: string;
