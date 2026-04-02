@@ -44,7 +44,12 @@
                 <p class="book-authors">{{ getAuthorsText(book.authors) }}</p>
 
                 <div class="book-isbn">
-                  <small>ISBN-13: {{ book.isbn13 }}</small>
+                  @if (book.isbn13) {
+                    <small>ISBN-13: {{ book.isbn13 }}</small>
+                  }
+                  @if (book.isbn10) {
+                    <small>ISBN-10: {{ book.isbn10 }}</small>
+                  }
                 </div>
               </div>
             </div>

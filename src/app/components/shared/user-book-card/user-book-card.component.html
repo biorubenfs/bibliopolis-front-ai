@@ -36,7 +36,12 @@
     }
 
     <div class="book-isbn">
-      <small>ISBN-13: {{ book().bookIsbn13 }}</small>
+      @if (book().bookIsbn13) {
+        <small>ISBN-13: {{ book().bookIsbn13 }}</small>
+      }
+      @if (book().bookIsbn10) {
+        <small>ISBN-10: {{ book().bookIsbn10 }}</small>
+      }
     </div>
     
     @if (showLibrariesCount() && book().libraries && book().libraries.length > 0) {
