@@ -1,7 +1,7 @@
-@import '../library-books/library-books.component.scss';
+@use '../../styles/books-layout' as layout;
 
 .my-books-container {
-  @extend .library-books-container;
+  @include layout.books-page-container;
 }
 
 .search-section {

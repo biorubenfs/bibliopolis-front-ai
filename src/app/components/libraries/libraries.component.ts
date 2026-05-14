@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { LibraryService } from '../../services/library.service';
 import { Library } from '../../models/library.model';
 import { NavbarComponent } from '../navbar/navbar.component';
@@ -13,7 +13,7 @@ import { LucideAngularModule, Search, Plus, Eye, Download, FileSpreadsheet, Edit
 
 @Component({
   selector: 'app-libraries',
-  imports: [NavbarComponent, DatePipe, RouterLink, CreateLibraryModalComponent, EditLibraryModalComponent, DeleteLibraryModalComponent, PaginationComponent, LucideAngularModule],
+  imports: [NavbarComponent, DatePipe, CreateLibraryModalComponent, EditLibraryModalComponent, DeleteLibraryModalComponent, PaginationComponent, LucideAngularModule],
   templateUrl: './libraries.component.html',
   styleUrl: './libraries.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
