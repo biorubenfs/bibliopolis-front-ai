@@ -107,9 +107,11 @@ export class LibraryService {
     );
   }
 
-  downloadLibraryBooksPdf(libraryId: string): Observable<Blob> {
+  downloadLibraryBooks(libraryId: string, format: 'pdf' | 'csv'): Observable<Blob> {
     const url = `${environment.apiUrl}/user-books/download`;
-    const params = new HttpParams().set('libraryId', libraryId);
+    const params = new HttpParams()
+      .set('libraryId', libraryId)
+      .set('format', format);
     return this.http.get(url, {
       params,
       withCredentials: true,
