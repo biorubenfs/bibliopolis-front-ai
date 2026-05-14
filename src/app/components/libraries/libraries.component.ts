@@ -9,7 +9,7 @@ import { EditLibraryModalComponent } from './edit-library-modal/edit-library-mod
 import { DeleteLibraryModalComponent } from './delete-library-modal/delete-library-modal.component';
 import { PaginationComponent } from '../shared/pagination/pagination.component';
 import { environment } from '../../../environments/environment';
-import { LucideAngularModule, Search, Plus, Eye, Download, Edit2, Trash2, Book } from 'lucide-angular';
+import { LucideAngularModule, Search, Plus, Eye, Download, FileSpreadsheet, Edit2, Trash2, Book } from 'lucide-angular';
 
 @Component({
   selector: 'app-libraries',
@@ -19,7 +19,7 @@ import { LucideAngularModule, Search, Plus, Eye, Download, Edit2, Trash2, Book }
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LibrariesComponent implements OnInit {
-  readonly icons = { Search, Plus, Eye, Download, Edit2, Trash2, Book };
+  readonly icons = { Search, Plus, Eye, Download, FileSpreadsheet, Edit2, Trash2, Book };
   private environment = environment;
   private libraryService = inject(LibraryService);
   private router = inject(Router);
@@ -47,7 +47,7 @@ export class LibrariesComponent implements OnInit {
   }
 
   downloadLibraryPdf(library: Library): void {
-    this.libraryService.downloadLibraryBooksPdf(library.id)
+    this.libraryService.downloadLibraryBooks(library.id, 'pdf')
       .subscribe({
         next: (blob) => {
           const link = document.createElement('a');
@@ -60,6 +60,24 @@ export class LibrariesComponent implements OnInit {
         },
         error: () => {
           alert('No se pudo descargar el PDF de la biblioteca.');
+        }
+      });
+  }
+
+  downloadLibraryCsv(library: Library): void {
+    this.libraryService.downloadLibraryBooks(library.id, 'csv')
+      .subscribe({
+        next: (blob) => {
+          const link = document.createElement('a');
+          link.href = window.URL.createObjectURL(blob);
+          link.download = `${library.name}.csv`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(link.href);
+        },
+        error: () => {
+          alert('No se pudo descargar el CSV de la biblioteca.');
         }
       });
   }
