@@ -7,19 +7,20 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import { CreateLibraryModalComponent } from './create-library-modal/create-library-modal.component';
 import { EditLibraryModalComponent } from './edit-library-modal/edit-library-modal.component';
 import { DeleteLibraryModalComponent } from './delete-library-modal/delete-library-modal.component';
+import { ImportLibraryModalComponent } from './import-library-modal/import-library-modal.component';
 import { PaginationComponent } from '../shared/pagination/pagination.component';
 import { environment } from '../../../environments/environment';
-import { LucideAngularModule, Search, Plus, Eye, Download, FileSpreadsheet, Edit2, Trash2, Book } from 'lucide-angular';
+import { LucideAngularModule, Search, Plus, Eye, Download, FileSpreadsheet, Edit2, Trash2, Book, Upload } from 'lucide-angular';
 
 @Component({
   selector: 'app-libraries',
-  imports: [NavbarComponent, DatePipe, RouterLink, CreateLibraryModalComponent, EditLibraryModalComponent, DeleteLibraryModalComponent, PaginationComponent, LucideAngularModule],
+  imports: [NavbarComponent, DatePipe, RouterLink, CreateLibraryModalComponent, EditLibraryModalComponent, DeleteLibraryModalComponent, ImportLibraryModalComponent, PaginationComponent, LucideAngularModule],
   templateUrl: './libraries.component.html',
   styleUrl: './libraries.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LibrariesComponent implements OnInit {
-  readonly icons = { Search, Plus, Eye, Download, FileSpreadsheet, Edit2, Trash2, Book };
+  readonly icons = { Search, Plus, Eye, Download, FileSpreadsheet, Edit2, Trash2, Book, Upload };
   private environment = environment;
   private libraryService = inject(LibraryService);
   private router = inject(Router);
@@ -30,6 +31,7 @@ export class LibrariesComponent implements OnInit {
   showCreateModal = signal<boolean>(false);
   showEditModal = signal<boolean>(false);
   showDeleteModal = signal<boolean>(false);
+  showImportModal = signal<boolean>(false);
   selectedLibrary = signal<Library | null>(null);
   
   // Pagination
@@ -148,6 +150,19 @@ export class LibrariesComponent implements OnInit {
 
   onLibraryDeleted(): void {
     this.closeDeleteModal();
+    this.loadLibraries();
+  }
+
+  openImportModal(): void {
+    this.showImportModal.set(true);
+  }
+
+  closeImportModal(): void {
+    this.showImportModal.set(false);
+  }
+
+  onLibraryImported(): void {
+    this.closeImportModal();
     this.loadLibraries();
   }
 

@@ -107,6 +107,21 @@ export class LibraryService {
     );
   }
 
+  importLibraryFromCsv(file: File, name: string, description: string): Observable<LibraryResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('name', name);
+    formData.append('description', description);
+
+    return this.http.post<LibraryResponse>(
+      `${environment.apiUrl}/libraries/import/csv`,
+      formData,
+      { withCredentials: true }
+    ).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   downloadLibraryBooks(libraryId: string, format: 'pdf' | 'csv'): Observable<Blob> {
     const url = `${environment.apiUrl}/user-books/download`;
     const params = new HttpParams()
