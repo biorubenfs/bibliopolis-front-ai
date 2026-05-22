@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { catchError, throwError, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { LibrariesResponse, LibraryResponse, CreateLibraryDto } from '../models/library.model';
+import { ImportLibraryJobResponse } from '../models/job.model';
 import { UserBooksResponse } from '../models/user-book.model';
 import { AddBookToLibraryDto } from '../models/book.model';
 import { ApiError } from '../models/error.model';
@@ -107,13 +108,13 @@ export class LibraryService {
     );
   }
 
-  importLibraryFromCsv(file: File, name: string, description: string): Observable<LibraryResponse> {
+  importLibraryFromCsv(file: File, name: string, description: string): Observable<ImportLibraryJobResponse> {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('name', name);
     formData.append('description', description);
 
-    return this.http.post<LibraryResponse>(
+    return this.http.post<ImportLibraryJobResponse>(
       `${environment.apiUrl}/libraries/import/csv`,
       formData,
       { withCredentials: true }

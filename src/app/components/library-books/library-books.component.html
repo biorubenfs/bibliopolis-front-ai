@@ -17,13 +17,31 @@
             <h2 class="library-title">{{ libraryName() }}</h2>
             <div class="library-description">{{ libraryDescription() }}</div>
           </div>
-          <button class="btn btn-primary" (click)="openAddBookModal()" type="button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="12" y1="5" x2="12" y2="19"/>
-              <line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
-            Añadir libro
-          </button>
+          <div class="header-actions">
+            @if (importJob()) {
+              <button
+                type="button"
+                class="btn btn-secondary"
+                [class.btn--pulsing]="importJob()!.status === 'pending' || importJob()!.status === 'in_progress'"
+                (click)="openImportJobModal()"
+              >
+                @if (importJob()!.status === 'pending' || importJob()!.status === 'in_progress') {
+                  <span class="btn-spinner" aria-hidden="true"></span>
+                  Importando...
+                } @else {
+                  <lucide-icon [img]="icons.FileText" [size]="16" aria-hidden="true" />
+                  Ver importación
+                }
+              </button>
+            }
+            <button class="btn btn-primary" (click)="openAddBookModal()" type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Añadir libro
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -101,4 +119,112 @@
     (closeModal)="closeRemoveBookModal()"
     (bookRemoved)="onBookRemovedFromList()"
   />
+}
+
+@if (showImportJobModal() && importJob()) {
+  <div class="import-job-overlay" (click)="closeImportJobModal()"></div>
+  <aside class="import-job-drawer" role="dialog" aria-modal="true" aria-labelledby="import-job-title">
+    <div class="import-job-drawer__header">
+      <div class="import-job-drawer__title-row">
+        <h3 id="import-job-title">Resultado de importación</h3>
+        @if (importJob()!.status === 'pending' || importJob()!.status === 'in_progress') {
+          <span class="drawer-status-badge drawer-status-badge--in-progress">En curso</span>
+        } @else if (importJob()!.status === 'completed') {
+          <span class="drawer-status-badge drawer-status-badge--completed">Completado</span>
+        } @else if (importJob()!.status === 'failed') {
+          <span class="drawer-status-badge drawer-status-badge--failed">Fallido</span>
+        }
+      </div>
+      <button type="button" class="import-job-drawer__close" (click)="closeImportJobModal()" aria-label="Cerrar panel">
+        <lucide-icon [img]="icons.X" [size]="20" />
+      </button>
+    </div>
+
+    <div class="import-job-drawer__body">
+      @if (importJob()!.status === 'pending' || importJob()!.status === 'in_progress') {
+        <div class="drawer-in-progress">
+          <span class="drawer-spinner" aria-hidden="true"></span>
+          <p>Importación en curso. Los libros irán apareciendo en cuanto finalice el proceso.</p>
+        </div>
+      }
+
+      @if (importJob()!.status === 'failed') {
+        <div class="drawer-error">
+          <lucide-icon [img]="icons.XCircle" [size]="32" aria-hidden="true" />
+          <p>El proceso de importación falló. Por favor, inténtalo de nuevo.</p>
+        </div>
+      }
+
+      @if (importJob()!.status === 'completed' && importJob()!.report) {
+        <div class="drawer-stats">
+          <div class="stat-card">
+            <span class="stat-value">{{ importJob()!.report!.total }}</span>
+            <span class="stat-label">Total</span>
+          </div>
+          <div class="stat-card stat-card--success">
+            <span class="stat-value">{{ importJob()!.report!.imported.length }}</span>
+            <span class="stat-label">Importados</span>
+          </div>
+          <div class="stat-card stat-card--warning">
+            <span class="stat-value">{{ importJob()!.report!.skipped.length }}</span>
+            <span class="stat-label">Omitidos</span>
+          </div>
+          <div class="stat-card" [class.stat-card--error]="importJob()!.report!.failed.length > 0">
+            <span class="stat-value">{{ importJob()!.report!.failed.length }}</span>
+            <span class="stat-label">No encontrados</span>
+          </div>
+        </div>
+
+        @if (importJob()!.report!.skipped.length > 0) {
+          <div class="drawer-isbn-section drawer-isbn-section--warning">
+            <div class="drawer-isbn-section__header">
+              <button type="button" class="drawer-isbn-section__toggle" (click)="toggleSkippedList()">
+                <lucide-icon [img]="icons.AlertTriangle" [size]="15" aria-hidden="true" />
+                <span>{{ importJob()!.report!.skipped.length }} omitidos (duplicados)</span>
+                <span class="drawer-isbn-section__chevron" [class.rotated]="showSkippedList()">
+                  <lucide-icon [img]="icons.ChevronDown" [size]="16" aria-hidden="true" />
+                </span>
+              </button>
+              <button type="button" class="btn-copy" (click)="copySkippedIsbns()">
+                <lucide-icon [img]="icons.Copy" [size]="13" aria-hidden="true" />
+                Copiar
+              </button>
+            </div>
+            @if (showSkippedList()) {
+              <ul class="isbn-list">
+                @for (isbn of importJob()!.report!.skipped; track isbn) {
+                  <li><code>{{ isbn }}</code></li>
+                }
+              </ul>
+            }
+          </div>
+        }
+
+        @if (importJob()!.report!.failed.length > 0) {
+          <div class="drawer-isbn-section drawer-isbn-section--error">
+            <div class="drawer-isbn-section__header">
+              <button type="button" class="drawer-isbn-section__toggle" (click)="toggleFailedList()">
+                <lucide-icon [img]="icons.XCircle" [size]="15" aria-hidden="true" />
+                <span>{{ importJob()!.report!.failed.length }} no encontrados</span>
+                <span class="drawer-isbn-section__chevron" [class.rotated]="showFailedList()">
+                  <lucide-icon [img]="icons.ChevronDown" [size]="16" aria-hidden="true" />
+                </span>
+              </button>
+              <button type="button" class="btn-copy" (click)="copyFailedIsbns()">
+                <lucide-icon [img]="icons.Copy" [size]="13" aria-hidden="true" />
+                Copiar
+              </button>
+            </div>
+            @if (showFailedList()) {
+              <ul class="isbn-list">
+                @for (isbn of importJob()!.report!.failed; track isbn) {
+                  <li><code>{{ isbn }}</code></li>
+                }
+              </ul>
+            }
+          </div>
+        }
+      }
+    </div>
+  </aside>
 }
