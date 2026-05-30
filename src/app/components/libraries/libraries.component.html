@@ -8,10 +8,16 @@
           <h2>Mis Bibliotecas</h2>
           <p class="subtitle">Gestiona tu colección de libros</p>
         </div>
-        <button class="btn btn-primary" (click)="openCreateModal()" type="button">
-          <lucide-icon [img]="icons.Plus" [size]="18" />
-          Nueva biblioteca
-        </button>
+        <div class="header-actions">
+          <button class="btn btn-secondary" (click)="openImportModal()" type="button">
+            <lucide-icon [img]="icons.Upload" [size]="18" />
+            Importar biblioteca
+          </button>
+          <button class="btn btn-primary" (click)="openCreateModal()" type="button">
+            <lucide-icon [img]="icons.Plus" [size]="18" />
+            Nueva biblioteca
+          </button>
+        </div>
       </div>
     </div>
 
@@ -118,5 +124,12 @@
     [library]="selectedLibrary()!"
     (closeModal)="closeDeleteModal()"
     (libraryDeleted)="onLibraryDeleted()"
+  />
+}
+
+@if (showImportModal()) {
+  <app-import-library-modal
+    (closeModal)="closeImportModal()"
+    (libraryImported)="onLibraryImported()"
   />
 }

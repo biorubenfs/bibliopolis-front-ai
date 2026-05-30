@@ -1,0 +1,115 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Importar biblioteca desde CSV</h3>
+      <button class="close-button" (click)="onClose()" type="button" aria-label="Cerrar modal">
+        <lucide-icon [img]="icons.X" [size]="20" />
+      </button>
+    </div>
+
+    @if (errorMessage()) {
+      <div class="alert alert-error" role="alert">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <form [formGroup]="importForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="import-name">Nombre de la biblioteca *</label>
+        <input
+          id="import-name"
+          type="text"
+          formControlName="name"
+          placeholder="Ej: Mi biblioteca personal"
+          [class.error]="name?.invalid && name?.touched"
+        />
+        @if (name?.invalid && name?.touched) {
+          <span class="error-message">
+            @if (name?.errors?.['required']) {
+              El nombre es obligatorio
+            }
+            @if (name?.errors?.['minlength']) {
+              El nombre debe tener al menos 3 caracteres
+            }
+          </span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="import-description">
+          Descripción *
+          <span class="char-counter" [class.error]="remainingChars < 0">
+            {{ remainingChars }} caracteres restantes
+          </span>
+        </label>
+        <textarea
+          id="import-description"
+          formControlName="description"
+          rows="3"
+          maxlength="100"
+          placeholder="Describe tu biblioteca..."
+          [class.error]="description?.invalid && description?.touched"
+        ></textarea>
+        @if (description?.invalid && description?.touched) {
+          <span class="error-message">
+            @if (description?.errors?.['required']) {
+              La descripción es obligatoria
+            }
+            @if (description?.errors?.['minlength']) {
+              La descripción debe tener al menos 10 caracteres
+            }
+            @if (description?.errors?.['maxlength']) {
+              La descripción no puede superar los 100 caracteres
+            }
+          </span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="import-file">Fichero CSV *</label>
+        <div class="file-input-wrapper">
+          <label for="import-file" class="file-label" [class.has-file]="selectedFile()">
+            <lucide-icon [img]="icons.Upload" [size]="18" />
+            @if (selectedFile()) {
+              {{ selectedFile()!.name }}
+            } @else {
+              Seleccionar fichero CSV
+            }
+          </label>
+          <input
+            id="import-file"
+            type="file"
+            accept=".csv"
+            class="file-input"
+            (change)="onFileChange($event)"
+          />
+        </div>
+        @if (fileError()) {
+          <span class="error-message">{{ fileError() }}</span>
+        }
+      </div>
+
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onClose()"
+          [disabled]="isSubmitting()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="isSubmitting()"
+        >
+          @if (isSubmitting()) {
+            Importando...
+          } @else {
+            Importar
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
